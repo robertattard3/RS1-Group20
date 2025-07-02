@@ -1,6 +1,6 @@
 # 41068 Ignition Bringup
 
-Bringup for *42043 Robotics Studio I*. Launches a turtlebot4 in a custom simulation world with trees and grass. We use **ROS2 Humble** and **Ignition Gazebo Fortress**.
+Bringup for *41068 Robotics Studio I*. Launches a turtlebot4 in a custom simulation world with trees and grass. We use **ROS2 Humble** and **Ignition Gazebo Fortress**.
 
 Worlds are build from [Gazebo Fuel](https://app.gazebosim.org/fuel/models).
 
