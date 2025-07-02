@@ -56,6 +56,11 @@ Now install this package:
   ```bash
   ros2 launch 41068_ignition_bringup 41068_ignition.launch.py slam:=true nav2:=true rviz:=true
   ```
+* Change world with `world` argument. Must be the name of a `.sdf` file in `worlds`, but without file extension e.g.
+  ```bash
+  ros2 launch 41068_ignition_bringup 41068_ignition.launch.py world:=large_demo
+  ```
+  
 
 ## Parameter settings
 
