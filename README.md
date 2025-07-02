@@ -52,6 +52,10 @@ Now install this package:
   ```bash
   ros2 launch 41068_ignition_bringup 41068_ignition.launch.py
   ```
+* As above with SLAM and autonomous navigation
+  ```bash
+  ros2 launch 41068_ignition_bringup 41068_ignition.launch.py slam:=true nav2:=true rviz:=true
+  ```
 
 ## Parameter settings
 
@@ -87,4 +91,14 @@ Trying to `ros2 topic echo` something and not getting a result? Could be for sev
 
 There are issues with simulating the lidar:
 * [With GPU](https://github.com/turtlebot/turtlebot4_simulator/issues/85)
+  * The fix here involves using the graphics card ALL the time, which is rubbish for battery life
+  * A better way is to [set two environment variables](https://wiki.debian.org/NVIDIA%20Optimus#Using_NVIDIA_PRIME_Render_Offload):
+    ```bash
+    # For all commands in this terminal
+    export __NV_PRIME_RENDER_OFFLOAD=1
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    
+    # Just for a single process (eg. launching Gazebo)
+    __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia ros2 launch 41068_ignition_bringup 41068_ignition.launch.py
+    ```
 * [Without GPU](https://github.com/iRobotEducation/create3_sim/issues/240)
