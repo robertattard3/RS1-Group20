@@ -32,13 +32,13 @@ ARGUMENTS = [
 def generate_launch_description():
 
     # Directories
-    pkg_42043_ignition_bringup = get_package_share_directory('42043_ignition_bringup')
+    pkg_41068_ignition_bringup = get_package_share_directory('41068_ignition_bringup')
 
     # Parameters
     param_file_cmd = DeclareLaunchArgument(
         'param_file',
         default_value=PathJoinSubstitution(
-            [pkg_42043_ignition_bringup, 'config', 'turtlebot4_node.yaml']),
+            [pkg_41068_ignition_bringup, 'config', 'turtlebot4_node.yaml']),
         description='Turtlebot4 Robot param file'
     )
 

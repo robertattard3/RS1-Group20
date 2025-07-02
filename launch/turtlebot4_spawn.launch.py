@@ -60,8 +60,8 @@ for pose_element in ['x', 'y', 'z', 'yaw']:
 def generate_launch_description():
 
     # Directories
-    pkg_42043_ignition_bringup = get_package_share_directory(
-        '42043_ignition_bringup')
+    pkg_41068_ignition_bringup = get_package_share_directory(
+        '41068_ignition_bringup')
     pkg_turtlebot4_description = get_package_share_directory(
         'turtlebot4_description')
     pkg_turtlebot4_viz = get_package_share_directory(
@@ -75,11 +75,11 @@ def generate_launch_description():
 
     # Paths
     turtlebot4_ros_ign_bridge_launch = PathJoinSubstitution(
-        [pkg_42043_ignition_bringup, 'launch', 'ros_ign_bridge.launch.py'])
+        [pkg_41068_ignition_bringup, 'launch', 'ros_ign_bridge.launch.py'])
     rviz_launch = PathJoinSubstitution(
         [pkg_turtlebot4_viz, 'launch', 'view_robot.launch.py'])
     turtlebot4_node_launch = PathJoinSubstitution(
-        [pkg_42043_ignition_bringup, 'launch', 'turtlebot4_nodes.launch.py'])
+        [pkg_41068_ignition_bringup, 'launch', 'turtlebot4_nodes.launch.py'])
     create3_nodes_launch = PathJoinSubstitution(
         [pkg_irobot_create_common_bringup, 'launch', 'create3_nodes.launch.py'])
     create3_ignition_nodes_launch = PathJoinSubstitution(
@@ -99,7 +99,7 @@ def generate_launch_description():
     param_file_cmd = DeclareLaunchArgument(
         'param_file',
         default_value=PathJoinSubstitution(
-            [pkg_42043_ignition_bringup, 'config', 'turtlebot4_node.yaml']),
+            [pkg_41068_ignition_bringup, 'config', 'turtlebot4_node.yaml']),
         description='Turtlebot4 Robot param file')
 
     # Launch configurations

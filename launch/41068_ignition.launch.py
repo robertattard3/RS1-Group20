@@ -42,14 +42,14 @@ for pose_element in ['x', 'y', 'z', 'yaw']:
 
 def generate_launch_description():
     # Directories
-    pkg_42043_ignition_bringup = get_package_share_directory(
-        '42043_ignition_bringup')
+    pkg_41068_ignition_bringup = get_package_share_directory(
+        '41068_ignition_bringup')
 
     # Paths
     ignition_launch = PathJoinSubstitution(
-        [pkg_42043_ignition_bringup, 'launch', 'ignition.launch.py'])
+        [pkg_41068_ignition_bringup, 'launch', 'ignition.launch.py'])
     robot_spawn_launch = PathJoinSubstitution(
-        [pkg_42043_ignition_bringup, 'launch', 'turtlebot4_spawn.launch.py'])
+        [pkg_41068_ignition_bringup, 'launch', 'turtlebot4_spawn.launch.py'])
 
     ignition = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([ignition_launch]),

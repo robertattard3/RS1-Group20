@@ -1,4 +1,4 @@
-# 42043 Ignition Bringup
+# 41068 Ignition Bringup
 
 Bringup for *42043 Robotics Studio I*. Launches a turtlebot4 in a custom simulation world with trees and grass. We use **ROS2 Humble** and **Ignition Gazebo Fortress**.
 
@@ -35,13 +35,13 @@ First install `turtlebot4_simulator` and its prerequisites. Instructions [here](
 Now install this package:
 * Create a new colcon workspace
   ```bash
-  mkdir -p 42043_ws/src
+  mkdir -p 41068_ws/src
   ```
 * Copy this package to the `src` directory in this workspace
 * Build package
   ```bash
   source /opt/ros/humble/setup.bash
-  cd 42043_ws
+  cd 41068_ws
   colcon build --symlink-install
   ```
 * Source workspace
@@ -50,7 +50,7 @@ Now install this package:
   ```
 * Launch basic trees world
   ```bash
-  ros2 launch 42043_ignition_bringup 42043_ignition.launch.py
+  ros2 launch 41068_ignition_bringup 41068_ignition.launch.py
   ```
 
 ## Parameter settings
