@@ -33,128 +33,41 @@
       <shadows>1</shadows>
     </scene>
 
-    <!-- 9 tiles of 15m x 15m patch of grass-->
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/hexarotor/models/grasspatch
-      </uri>
-      <name>grass1</name>
-      <pose>15 15 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/hexarotor/models/grasspatch
-      </uri>
-      <name>grass2</name>
-      <pose>15 0 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/hexarotor/models/grasspatch
-      </uri>
-      <name>grass3</name>
-      <pose>15 -15 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/hexarotor/models/grasspatch
-      </uri>
-      <name>grass4</name>
-      <pose>0 15 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/hexarotor/models/grasspatch
-      </uri>
-      <name>grass5</name>
-      <pose>0 0 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/hexarotor/models/grasspatch
-      </uri>
-      <name>grass6</name>
-      <pose>0 -15 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/hexarotor/models/grasspatch
-      </uri>
-      <name>grass7</name>
-      <pose>-15 15 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/hexarotor/models/grasspatch
-      </uri>
-      <name>grass8</name>
-      <pose>-15 0 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/hexarotor/models/grasspatch
-      </uri>
-      <name>grass9</name>
-      <pose>-15 -15 0 0 0 0</pose>
-    </include>
-
-    <!-- Oak trees -->
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
-      </uri>
-      <name>oak1</name>
-      <pose>20 20 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
-      </uri>
-      <name>oak2</name>
-      <pose>20 15 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
-      </uri>
-      <name>oak3</name>
-      <pose>20 10 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
-      </uri>
-      <name>oak4</name>
-      <pose>20 5 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
-      </uri>
-      <name>oak5</name>
-      <pose>15 20 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
-      </uri>
-      <name>oak6</name>
-      <pose>15 15 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
-      </uri>
-      <name>oak7</name>
-      <pose>15 10 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
-      </uri>
-      <name>oak8</name>
-      <pose>15 5 0 0 0 0</pose>
-    </include>
+    <!-- Large ground plane with grass texture -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>45 45</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>45 45</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.5 0.5 0.5 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+            <pbr>
+              <metal>
+                <albedo_map>
+                  package://41068_ignition_bringup/worlds/textures/empty_grass.png
+                </albedo_map>
+              </metal>
+            </pbr>
+          </material>
+        </visual>
+      </link>
+    </model>
     
     <!-- Pine trees -->
     <include>

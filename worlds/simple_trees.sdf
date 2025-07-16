@@ -33,14 +33,41 @@
       <shadows>1</shadows>
     </scene>
 
-    <!-- 15m x 15m patch of grass-->
-    <include>
-      <uri>
-        https://fuel.gazebosim.org/1.0/hexarotor/models/grasspatch
-      </uri>
-      <name>grass1</name>
-      <pose>0 0 0 0 0 0</pose>
-    </include>
+    <!-- Small ground plane with grass texture -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>15 15</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>15 15</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.5 0.5 0.5 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+            <pbr>
+              <metal>
+                <albedo_map>
+                  package://41068_ignition_bringup/worlds/textures/empty_grass.png
+                </albedo_map>
+              </metal>
+            </pbr>
+          </material>
+        </visual>
+      </link>
+    </model>
 
     <!-- Oak tree -->
     <include>
