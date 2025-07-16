@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="mars_explorer" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="husky" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:arg name="laser_visual"  default="false" />
   <xacro:arg name="camera_visual" default="false"/>
   <xacro:arg name="imu_visual"    default="false"/>
@@ -9,7 +9,7 @@
       <always_on>true</always_on>
       <visualize>$(arg imu_visual)</visualize>
       <update_rate>100</update_rate>
-      <topic>model/mars_explorer/imu</topic>
+      <topic>model/husky/imu</topic>
       <gz_frame_id>imu_link</gz_frame_id>
       <imu>
         <angular_velocity>
@@ -82,7 +82,7 @@
       <wheel_separation>0.288</wheel_separation>
       <wheel_radius>0.033</wheel_radius>
       <odom_publish_frequency>20</odom_publish_frequency>
-      <topic>model/mars_explorer/cmd_vel</topic>
+      <topic>model/husky/cmd_vel</topic>
       <frame_id>odom</frame_id>
       <child_frame_id>base_link</child_frame_id>
     </plugin>
@@ -92,7 +92,7 @@
     <plugin
       filename="ignition-gazebo-joint-state-publisher-system"
       name="ignition::gazebo::systems::JointStatePublisher">
-      <topic>model/mars_explorer/joint_states</topic>
+      <topic>model/husky/joint_states</topic>
     </plugin>
   </gazebo>
 
@@ -109,7 +109,7 @@
     <sensor type="gpu_lidar" name="lidar">
       <pose relative_to='base_scan'>0 0 0 0 0 0</pose>
       <visualize>$(arg laser_visual)</visualize>
-      <topic>model/mars_explorer/scan</topic>
+      <topic>model/husky/scan</topic>
       <update_rate>3</update_rate>
       <gz_frame_id>base_scan</gz_frame_id>
       <ray>
@@ -165,7 +165,7 @@
       <always_on>1</always_on>
       <update_rate>10</update_rate>
       <visualize>$(arg camera_visual)</visualize>
-      <topic>/model/mars_explorer/camera</topic>
+      <topic>/model/husky/camera</topic>
       <gz_frame_id>camera_link</gz_frame_id>
     </sensor>
   </gazebo>

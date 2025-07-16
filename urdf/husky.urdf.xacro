@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
-<robot name="mars_explorer" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="husky" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:include filename="$(find 41068_ignition_bringup)/urdf/common_properties.urdf.xacro"/>
-  <xacro:include filename="$(find 41068_ignition_bringup)/urdf/mars_explorer.gazebo.xacro"/>
+  <xacro:include filename="$(find 41068_ignition_bringup)/urdf/husky.gazebo.xacro"/>
 
   <xacro:property name="r200_cam_rgb_px" value="0.005"/>
   <xacro:property name="r200_cam_rgb_py" value="0.018"/>
@@ -20,8 +20,7 @@
     <visual>
       <origin xyz="0 0 0.0" rpy="1.570796 0 1.570796"/>
       <geometry>
-        <!-- <box size="1.0 1.0 0.03"/> -->
-        <mesh filename="file://$(find 41068_ignition_bringup)/urdf/meshes/curiosity_mars_rover.obj" scale="0.37 0.37 0.37"/>
+        <mesh filename="file://$(find 41068_ignition_bringup)/urdf/meshes/base_link.dae"/>
       </geometry>
     </visual>
 
