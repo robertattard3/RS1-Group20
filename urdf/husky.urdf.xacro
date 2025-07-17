@@ -109,20 +109,20 @@
   <joint name="scan_joint" type="fixed">
     <parent link="base_link"/>
     <child link="base_scan"/>
-    <origin xyz="0 0 1.0 " rpy="0 0 0"/>
+    <origin xyz="0 0 0.68" rpy="0 0 0"/>
   </joint>
 
   <link name="base_scan">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <cylinder length="0.0315" radius="0.055"/>
+        <cylinder length="0.04" radius="0.09"/>
       </geometry>
       <material name="dark"/>
     </visual>
 
     <inertial>
-      <mass value="0" /> <!-- 0.114 -->
+      <mass value="0" />
       <origin xyz="0 0 0" />
       <inertia ixx="0.001" ixy="0.0" ixz="0.0"
                iyy="0.001" iyz="0.0"
