@@ -6,7 +6,7 @@ Worlds are build from [Gazebo Fuel](https://app.gazebosim.org/fuel/models).
 
 ## Installation
 
-First install `turtlebot4_simulator` and its prerequisites. Instructions [here](https://turtlebot.github.io/turtlebot4-user-manual/software/turtlebot4_simulator.html). 
+First install some dependencies:
 
 * Install Gazebo
   ```bash
@@ -15,17 +15,9 @@ First install `turtlebot4_simulator` and its prerequisites. Instructions [here](
   wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
   sudo apt-get update && sudo apt-get install ignition-fortress
   ```
-* Install development tools
+* Install development tools and robot localisation
   ```bash
-  sudo apt install ros-dev-tools
-  ```
-* Test simulator with default settings:
-  ```bash
-  ros2 launch turtlebot4_ignition_bringup turtlebot4_ignition.launch.py
-  ```
-* Test simulator with SLAM and autonomous navigation
-  ```bash
-  ros2 launch turtlebot4_ignition_bringup turtlebot4_ignition.launch.py slam:=true nav2:=true rviz:=true
+  sudo apt install ros-dev-tools ros-humble-robot-localization
   ```
 
 Now install this package:
@@ -56,14 +48,6 @@ Now install this package:
   ```bash
   ros2 launch 41068_ignition_bringup 41068_ignition.launch.py world:=large_demo
   ```
-  
-
-## Parameter settings
-
-Disable safety behaviours (eg. stopping when the real robot might topple):
-```bash
-ros2 param set /motion_control safety_override full
-```
 
 ## Errors
 
@@ -80,26 +64,3 @@ I found [this thread](https://robotics.stackexchange.com/questions/111547/gazebo
 ```bash
 export QT_QPA_PLATFORM=xcb
 ```
-
-### Empty topics
-
-Trying to `ros2 topic echo` something and not getting a result? Could be for several reasons:
-
-* If the robot is still on the dock, it won't publish lidar scans or camera images
-* Topics might not be correctly bridging from Gazebo to ROS: check the `.sdf` file, and make sure the name of the `.sdf` is identical to the `world name` tag. For example, `simple_trees.sdf` should have that tag as `<world name="simple_trees">`
-
-### Lidar Scan
-
-There are issues with simulating the lidar:
-* [With GPU](https://github.com/turtlebot/turtlebot4_simulator/issues/85)
-  * The fix here involves using the graphics card ALL the time, which is rubbish for battery life
-  * A better way is to [set two environment variables](https://wiki.debian.org/NVIDIA%20Optimus#Using_NVIDIA_PRIME_Render_Offload):
-    ```bash
-    # For all commands in this terminal
-    export __NV_PRIME_RENDER_OFFLOAD=1
-    export __GLX_VENDOR_LIBRARY_NAME=nvidia
-    
-    # Just for a single process (eg. launching Gazebo)
-    __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia ros2 launch 41068_ignition_bringup 41068_ignition.launch.py
-    ```
-* [Without GPU](https://github.com/iRobotEducation/create3_sim/issues/240)
