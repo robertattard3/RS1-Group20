@@ -93,10 +93,10 @@
   </link>
 
   <!-- Wheels -->
-  <xacro:wheel wheel_id="front_left" x_pos="0.256" y_pos="0.2854"/>
-  <xacro:wheel wheel_id="front_right" x_pos="0.256" y_pos="-0.2854"/>
-  <xacro:wheel wheel_id="rear_left" x_pos="-0.256" y_pos="0.2854"/>
-  <xacro:wheel wheel_id="rear_right" x_pos="-0.256" y_pos="-0.2854"/>
+  <xacro:wheel wheel_id="front_left" x_pos="0.256" y_pos="${wheel_separation/2}"/>
+  <xacro:wheel wheel_id="front_right" x_pos="0.256" y_pos="-${wheel_separation/2}"/>
+  <xacro:wheel wheel_id="rear_left" x_pos="-0.256" y_pos="${wheel_separation/2}"/>
+  <xacro:wheel wheel_id="rear_right" x_pos="-0.256" y_pos="-${wheel_separation/2}"/>
 
   <joint name="imu_joint" type="fixed">
     <parent link="base_link"/>
