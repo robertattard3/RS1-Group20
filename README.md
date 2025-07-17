@@ -15,10 +15,6 @@ First install `turtlebot4_simulator` and its prerequisites. Instructions [here](
   wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
   sudo apt-get update && sudo apt-get install ignition-fortress
   ```
-* Install `turtlebot4_simulator`
-  ```bash
-  sudo apt install ros-humble-turtlebot4-simulator ros-humble-irobot-create-nodes
-  ```
 * Install development tools
   ```bash
   sudo apt install ros-dev-tools

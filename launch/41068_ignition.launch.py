@@ -1,5 +1,6 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.conditions import IfCondition
 from launch.substitutions import (Command, LaunchConfiguration,
                                   PathJoinSubstitution)
 from launch_ros.actions import Node
@@ -24,6 +25,18 @@ def generate_launch_description():
     )
     use_sim_time = LaunchConfiguration('use_sim_time')
     ld.add_action(use_sim_time_launch_arg)
+    rviz_launch_arg = DeclareLaunchArgument(
+        'rviz',
+        default_value='False',
+        description='Flag to launch RViz'
+    )
+    ld.add_action(rviz_launch_arg)
+    nav2_launch_arg = DeclareLaunchArgument(
+        'nav2',
+        default_value='False',
+        description='Flag to launch Nav2'
+    )
+    ld.add_action(nav2_launch_arg)
 
     # Load robot_description and start robot_state_publisher
     robot_description_content = ParameterValue(
@@ -97,8 +110,21 @@ def generate_launch_description():
         output='screen',
         parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-d', PathJoinSubstitution([config_path,
-                                               '41068.rviz'])]
+                                               '41068.rviz'])],
+        condition=IfCondition(LaunchConfiguration('rviz'))
     )
     ld.add_action(rviz_node)
+
+    # Nav2 enables mapping and waypoint following
+    nav2 = IncludeLaunchDescription(
+        PathJoinSubstitution([pkg_path,
+                              'launch',
+                              '41068_navigation.launch.py']),
+        launch_arguments={
+            'use_sim_time': use_sim_time
+        }.items(),
+        condition=IfCondition(LaunchConfiguration('nav2'))
+    )
+    ld.add_action(nav2)
 
     return ld
