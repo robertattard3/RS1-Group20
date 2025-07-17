@@ -4,6 +4,8 @@
   <xacro:arg name="camera_visual" default="false"/>
   <xacro:arg name="imu_visual"    default="false"/>
 
+  <xacro:include filename="$(find 41068_ignition_bringup)/urdf/wheel.urdf.xacro"/>
+
   <gazebo reference="imu_link">
     <sensor type="imu" name="imu">
       <always_on>true</always_on>
@@ -75,16 +77,9 @@
  
   <gazebo>
     <plugin
-      filename="libignition-gazebo-diff-drive-system.so"
-      name="ignition::gazebo::systems::DiffDrive">
-      <left_joint>wheel_left_joint</left_joint>
-      <right_joint>wheel_right_joint</right_joint>
-      <wheel_separation>0.288</wheel_separation>
-      <wheel_radius>0.033</wheel_radius>
-      <odom_publish_frequency>20</odom_publish_frequency>
+      filename="ignition-gazebo-velocity-control-system"
+      name="ignition::gazebo::systems::VelocityControl">
       <topic>model/husky/cmd_vel</topic>
-      <frame_id>odom</frame_id>
-      <child_frame_id>base_link</child_frame_id>
     </plugin>
   </gazebo>
 
