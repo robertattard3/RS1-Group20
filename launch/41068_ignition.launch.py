@@ -78,4 +78,15 @@ def generate_launch_description():
     )
     ld.add_action(gazebo_bridge)
 
+    # rviz2 visualises data
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        output='screen',
+        parameters=[{'use_sim_time': use_sim_time}],
+        arguments=['-d', PathJoinSubstitution([config_path,
+                                               '41068.rviz'])]
+    )
+    ld.add_action(rviz_node)
+
     return ld
