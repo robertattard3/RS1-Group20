@@ -1,76 +1,130 @@
-# Copyright 2023 Clearpath Robotics, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-# @author Roni Kreinin (rkreinin@clearpathrobotics.com)
-
-from ament_index_python.packages import get_package_share_directory
-
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
-
-
-ARGUMENTS = [
-    DeclareLaunchArgument('namespace', default_value='',
-                          description='Robot namespace'),
-    DeclareLaunchArgument('rviz', default_value='false',
-                          choices=['true', 'false'], description='Start rviz.'),
-    DeclareLaunchArgument('world', default_value='simple_trees',
-                          description='Ignition World'),
-    DeclareLaunchArgument('model', default_value='standard',
-                          choices=['standard', 'lite'],
-                          description='Turtlebot4 Model'),
-]
-
-for pose_element in ['x', 'y', 'z', 'yaw']:
-    ARGUMENTS.append(DeclareLaunchArgument(pose_element, default_value='0.0',
-                     description=f'{pose_element} component of the robot pose.'))
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.conditions import IfCondition
+from launch.substitutions import (Command, LaunchConfiguration,
+                                  PathJoinSubstitution)
+from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    # Directories
-    pkg_41068_ignition_bringup = get_package_share_directory(
-        '41068_ignition_bringup')
 
-    # Paths
-    ignition_launch = PathJoinSubstitution(
-        [pkg_41068_ignition_bringup, 'launch', 'ignition.launch.py'])
-    robot_spawn_launch = PathJoinSubstitution(
-        [pkg_41068_ignition_bringup, 'launch', 'turtlebot4_spawn.launch.py'])
+    ld = LaunchDescription()
 
-    ignition = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([ignition_launch]),
-        launch_arguments=[
-            ('world', LaunchConfiguration('world'))
-        ]
+    # Get paths to directories
+    pkg_path = FindPackageShare('41068_ignition_bringup')
+    config_path = PathJoinSubstitution([pkg_path,
+                                       'config'])
+
+    # Additional command line arguments
+    use_sim_time_launch_arg = DeclareLaunchArgument(
+        'use_sim_time',
+        default_value='True',
+        description='Flag to enable use_sim_time'
     )
-
-    robot_spawn = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([robot_spawn_launch]),
-        launch_arguments=[
-            ('namespace', LaunchConfiguration('namespace')),
-            ('rviz', LaunchConfiguration('rviz')),
-            ('x', LaunchConfiguration('x')),
-            ('y', LaunchConfiguration('y')),
-            ('z', LaunchConfiguration('z')),
-            ('yaw', LaunchConfiguration('yaw'))]
+    use_sim_time = LaunchConfiguration('use_sim_time')
+    ld.add_action(use_sim_time_launch_arg)
+    rviz_launch_arg = DeclareLaunchArgument(
+        'rviz',
+        default_value='False',
+        description='Flag to launch RViz'
     )
+    ld.add_action(rviz_launch_arg)
+    nav2_launch_arg = DeclareLaunchArgument(
+        'nav2',
+        default_value='False',
+        description='Flag to launch Nav2'
+    )
+    ld.add_action(nav2_launch_arg)
 
-    # Create launch description and add actions
-    ld = LaunchDescription(ARGUMENTS)
-    ld.add_action(ignition)
-    ld.add_action(robot_spawn)
+    # Load robot_description and start robot_state_publisher
+    robot_description_content = ParameterValue(
+        Command(['xacro ',
+                 PathJoinSubstitution([pkg_path,
+                                       'urdf',
+                                       'husky.urdf.xacro'])]),
+        value_type=str)
+    robot_state_publisher_node = Node(package='robot_state_publisher',
+                                      executable='robot_state_publisher',
+                                      parameters=[{
+                                          'robot_description': robot_description_content,
+                                          'use_sim_time': use_sim_time
+                                      }])
+    ld.add_action(robot_state_publisher_node)
+
+    # Publish odom -> base_link transform **using robot_localization**
+    robot_localization_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='robot_localization',
+        output='screen',
+        parameters=[PathJoinSubstitution([config_path,
+                                          'robot_localization.yaml']),
+                    {'use_sim_time': use_sim_time}]
+    )
+    ld.add_action(robot_localization_node)
+
+    # Start Gazebo to simulate the robot in the chosen world
+    world_launch_arg = DeclareLaunchArgument(
+        'world',
+        default_value='simple_trees',
+        description='Which world to load',
+        choices=['simple_trees', 'large_demo']
+    )
+    ld.add_action(world_launch_arg)
+    gazebo = IncludeLaunchDescription(
+        PathJoinSubstitution([FindPackageShare('ros_ign_gazebo'),
+                             'launch', 'ign_gazebo.launch.py']),
+        launch_arguments={
+            'ign_args': [PathJoinSubstitution([pkg_path,
+                                               'worlds',
+                                               [LaunchConfiguration('world'), '.sdf']]),
+                         ' -r']}.items()
+    )
+    ld.add_action(gazebo)
+
+    # Spawn robot in Gazebo
+    robot_spawner = Node(
+        package='ros_ign_gazebo',
+        executable='create',
+        output='screen',
+        arguments=['-topic', '/robot_description', '-z', '0.4']
+    )
+    ld.add_action(robot_spawner)
+
+    # Bridge topics between gazebo and ROS2
+    gazebo_bridge = Node(
+        package='ros_ign_bridge',
+        executable='parameter_bridge',
+        parameters=[{'config_file': PathJoinSubstitution([config_path,
+                                                          'gazebo_bridge.yaml']),
+                    'use_sim_time': use_sim_time}]
+    )
+    ld.add_action(gazebo_bridge)
+
+    # rviz2 visualises data
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        output='screen',
+        parameters=[{'use_sim_time': use_sim_time}],
+        arguments=['-d', PathJoinSubstitution([config_path,
+                                               '41068.rviz'])],
+        condition=IfCondition(LaunchConfiguration('rviz'))
+    )
+    ld.add_action(rviz_node)
+
+    # Nav2 enables mapping and waypoint following
+    nav2 = IncludeLaunchDescription(
+        PathJoinSubstitution([pkg_path,
+                              'launch',
+                              '41068_navigation.launch.py']),
+        launch_arguments={
+            'use_sim_time': use_sim_time
+        }.items(),
+        condition=IfCondition(LaunchConfiguration('nav2'))
+    )
+    ld.add_action(nav2)
+
     return ld
