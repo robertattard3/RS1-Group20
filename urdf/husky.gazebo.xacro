@@ -75,11 +75,24 @@
     <material>Gazebo/Grey</material>
   </gazebo>
  
+  <!-- Move base directly without faffing around with diff drive controllers -->
   <gazebo>
     <plugin
       filename="ignition-gazebo-velocity-control-system"
       name="ignition::gazebo::systems::VelocityControl">
       <topic>model/husky/cmd_vel</topic>
+    </plugin>
+  </gazebo>
+
+  <!-- Publish odometry separately -->
+  <gazebo>
+    <plugin
+      filename="ignition-gazebo-odometry-publisher-system"
+      name="ignition::gazebo::systems::OdometryPublisher">
+      <topic>model/husky/odometry</topic>
+      <odom_publish_frequency>20</odom_publish_frequency>
+      <odom_frame>odom</odom_frame>
+      <robot_base_frame>base_link</robot_base_frame>
     </plugin>
   </gazebo>
 

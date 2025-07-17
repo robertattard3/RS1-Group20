@@ -40,6 +40,18 @@ def generate_launch_description():
                                       }])
     ld.add_action(robot_state_publisher_node)
 
+    # Publish odom -> base_link transform **using robot_localization**
+    robot_localization_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='robot_localization',
+        output='screen',
+        parameters=[PathJoinSubstitution([config_path,
+                                          'robot_localization.yaml']),
+                    {'use_sim_time': use_sim_time}]
+    )
+    ld.add_action(robot_localization_node)
+
     # Start Gazebo to simulate the robot in the chosen world
     world_launch_arg = DeclareLaunchArgument(
         'world',
