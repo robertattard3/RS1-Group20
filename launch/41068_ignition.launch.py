@@ -64,8 +64,18 @@ def generate_launch_description():
         package='ros_ign_gazebo',
         executable='create',
         output='screen',
-        arguments=['-topic', '/robot_description', '-z', '1']
+        arguments=['-topic', '/robot_description', '-z', '0.4']
     )
     ld.add_action(robot_spawner)
+
+    # Bridge topics between gazebo and ROS2
+    gazebo_bridge = Node(
+        package='ros_ign_bridge',
+        executable='parameter_bridge',
+        parameters=[{'config_file': PathJoinSubstitution([config_path,
+                                                          'gazebo_bridge.yaml']),
+                    'use_sim_time': use_sim_time}]
+    )
+    ld.add_action(gazebo_bridge)
 
     return ld
