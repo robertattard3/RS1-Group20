@@ -64,7 +64,7 @@ def generate_launch_description():
         package='ros_ign_gazebo',
         executable='create',
         output='screen',
-        arguments=['-topic', '/robot_description']
+        arguments=['-topic', '/robot_description', '-z', '1']
     )
     ld.add_action(robot_spawner)
 
