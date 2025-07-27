@@ -8,6 +8,7 @@ Worlds are build from [Gazebo Fuel](https://app.gazebosim.org/fuel/models).
 
 First install some dependencies:
 
+* If you haven't already, install ROS2 Humble. Follow the instructions here: https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html
 * Install Gazebo
   ```bash
   sudo apt-get update && sudo apt-get install wget
@@ -21,7 +22,11 @@ First install some dependencies:
   sudo apt install ros-humble-ros-ign ros-humble-ros-ign-interfaces
   sudo apt install ros-humble-turtlebot4-simulator ros-humble-irobot-create-nodes
   ```
-  
+* Make sure that your installation is up to date. This is particularly important if you installed ROS a long time ago, such as in another subject. If you get errors here, make sure to resolve these before continuing.
+  ```bash
+  sudo apt upgrade
+  sudo apt update
+  ```  
 
 Now install this package:
 * Create a new colcon workspace
@@ -29,7 +34,7 @@ Now install this package:
   mkdir -p 41068_ws/src
   ```
 * Copy this package to the `src` directory in this workspace
-* Build package
+* Build package. If you get an error suggesting a missing dependency, make sure you have followed all of the above installation instructions correctly.
   ```bash
   source /opt/ros/humble/setup.bash
   cd 41068_ws
@@ -39,7 +44,7 @@ Now install this package:
   ```bash
   source ~/41068_ws/install/setup.bash
   ```
-* Launch basic trees world
+* Launch basic trees world. It might take a little while to load the first time you run it since it is downloading the world model. If it crashes the first time, try running it again.
   ```bash
   ros2 launch 41068_ignition_bringup 41068_ignition.launch.py
   ```
@@ -51,6 +56,11 @@ Now install this package:
   ```bash
   ros2 launch 41068_ignition_bringup 41068_ignition.launch.py world:=large_demo
   ```
+* And similarly, the different world, and with SLAM and navigation:
+  ```bash
+  ros2 launch 41068_ignition_bringup 41068_ignition.launch.py slam:=true nav2:=true rviz:=true world:=large_demo
+  ```
+* When launching with rviz, you can send a waypoint to the robot by clicking the 
 
 ## Errors
 
