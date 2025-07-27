@@ -2,12 +2,20 @@
 <model name="grass_plane">
     <static>true</static>
     <link name="link">
-        <collision name="collision">
+        <!--<collision name="collision">
             <geometry>
             <plane>
                 <normal>0 0 1</normal>
                 <size>25 25</size>
             </plane>
+            </geometry>
+        </collision>-->
+        <collision name="collision">
+            <geometry>
+            <box>
+                <normal>0 0 1</normal>
+                <size>25 25 0.01</size>
+            </box>
             </geometry>
         </collision>
         <visual name="visual">

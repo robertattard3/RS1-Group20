@@ -2,12 +2,20 @@
 <model name="forest_wall">
     <static>true</static>
     <link name="link">
-        <collision name="collision">
+        <!--<collision name="collision">
             <geometry>
             <plane>
                 <normal>0 0 1</normal>
                 <size>9.32 4</size>
             </plane>
+            </geometry>
+        </collision>-->
+        <collision name="collision">
+            <geometry>
+            <box>
+                <normal>0 0 1</normal>
+                <size>9.32 4 0.01</size>
+            </box>
             </geometry>
         </collision>
         <visual name="visual">
@@ -20,9 +28,9 @@
             </geometry>
             <material>
                 <!-- <diffuse>0.8 0.8 0.8 1</diffuse> -->
-                <ambient>1.0 1.0 1.0 1</ambient>
+                <!-- <ambient>1.0 1.0 1.0 1</ambient> -->
                 <diffuse>1.0 1.0 1.0 1</diffuse>
-                <specular>1.0 1.0 1.0 1</specular>
+                <!-- <specular>1.0 1.0 1.0 1</specular> -->
                 <pbr>
                     <metal>
                     <albedo_map>
@@ -30,6 +38,7 @@
                     </albedo_map>
                     </metal>
                 </pbr>
+                <double_sided>true</double_sided>
             </material>
         </visual>
     </link>
