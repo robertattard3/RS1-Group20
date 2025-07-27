@@ -18,7 +18,10 @@ First install some dependencies:
 * Install development tools and robot localisation
   ```bash
   sudo apt install ros-dev-tools ros-humble-robot-localization
+  sudo apt install ros-humble-ros-ign ros-humble-ros-ign-interfaces
+  sudo apt install ros-humble-turtlebot4-simulator ros-humble-irobot-create-nodes
   ```
+  
 
 Now install this package:
 * Create a new colcon workspace
@@ -32,9 +35,9 @@ Now install this package:
   cd 41068_ws
   colcon build --symlink-install
   ```
-* Source workspace
+* Source workspace (if you add this to your ~/.bashrc, then you don't need to do this each time)
   ```bash
-  source install/setup.bash
+  source ~/41068_ws/install/setup.bash
   ```
 * Launch basic trees world
   ```bash
