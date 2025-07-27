@@ -20,7 +20,7 @@ def generate_launch_description():
     # Additional command line arguments
     use_sim_time_launch_arg = DeclareLaunchArgument(
         'use_sim_time',
-        default_value='True',
+        default_value='False',
         description='Flag to enable use_sim_time'
     )
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -33,7 +33,7 @@ def generate_launch_description():
     ld.add_action(rviz_launch_arg)
     nav2_launch_arg = DeclareLaunchArgument(
         'nav2',
-        default_value='False',
+        default_value='True',
         description='Flag to launch Nav2'
     )
     ld.add_action(nav2_launch_arg)
@@ -89,6 +89,7 @@ def generate_launch_description():
         package='ros_ign_gazebo',
         executable='create',
         output='screen',
+        parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-topic', '/robot_description', '-z', '0.4']
     )
     ld.add_action(robot_spawner)

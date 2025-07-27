@@ -56,7 +56,7 @@ Now install this package:
   ```bash
   ros2 launch 41068_ignition_bringup 41068_ignition.launch.py world:=large_demo
   ```
-* And similarly, the different world, and with SLAM and navigation:
+* And similarly, the larger world, and with SLAM and navigation:
   ```bash
   ros2 launch 41068_ignition_bringup 41068_ignition.launch.py slam:=true nav2:=true rviz:=true world:=large_demo
   ```
