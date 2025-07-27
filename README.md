@@ -44,7 +44,7 @@ Now install this package:
   ```bash
   source ~/41068_ws/install/setup.bash
   ```
-* Launch basic trees world. It might take a little while to load the first time you run it since it is downloading the world model. If it crashes the first time, try running it again.
+* Launch basic trees world. It might take a little while to load the first time you run it since it is downloading world model resources. If it crashes the first time, try running it again.
   ```bash
   ros2 launch 41068_ignition_bringup 41068_ignition.launch.py
   ```
@@ -52,7 +52,7 @@ Now install this package:
   ```bash
   ros2 launch 41068_ignition_bringup 41068_ignition.launch.py slam:=true nav2:=true rviz:=true
   ```
-* Change world with `world` argument. Must be the name of a `.sdf` file in `worlds`, but without file extension e.g.
+* Change world with `world` argument. Must be the name of a `.sdf` file in `worlds`, but without file extension. Note this might also take a while the first time you run it since it is downloading extra model resources.
   ```bash
   ros2 launch 41068_ignition_bringup 41068_ignition.launch.py world:=large_demo
   ```
@@ -60,9 +60,28 @@ Now install this package:
   ```bash
   ros2 launch 41068_ignition_bringup 41068_ignition.launch.py slam:=true nav2:=true rviz:=true world:=large_demo
   ```
-* When launching with rviz, you can send a waypoint to the robot by clicking the 
+* When launching with rviz, you can send a waypoint to the robot by clicking the "2D Goal pose" and then a location in the map. The robot is navigating using the nav2 package. If it gets stuck, you can try the buttons in the Navigation 2 panel in the top right of RVIZ.
+
+* You can also drive the robot using keyboard teleoperation by running the following in a separate terminal, then use the keys listed in the instructions to move the robot:
+  ```bash
+  ros2 run teleop_twist_keyboard teleop_twist_keyboard
+  ```
+
+
 
 ## Errors
+
+### Jump back in time
+
+If you continuously get an error like:
+
+```bash
+Detected jump back in time. Clearing TF buffer
+```
+
+and you probably see things flashing in rviz, then this is probably due to the simulation clock time being reset constantly. This is likely caused by multiple gazebo instances running, perhaps a crashed gazebo in the background that didn't close properly. 
+
+To fix this, I suggest restarting the computer. 
 
 ### Ogre Exception
 
