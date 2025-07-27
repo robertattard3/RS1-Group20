@@ -18,6 +18,7 @@
         <quadratic>0.001</quadratic>
       </attenuation> -->
       <direction>-0.5 0.1 -0.9</direction>
+      <intensity>5</intensity>
     </light>
     <gravity>0 0 -9.81</gravity>
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
@@ -31,6 +32,7 @@
       <ambient>1.0 1.0 1.0 1</ambient>
       <background>0.6 0.8 1.0 1</background>
       <shadows>0</shadows>
+      <grid>0</grid>
     </scene>
 
     <!-- Initialise spherical coordinates somewhere -->
@@ -143,56 +145,56 @@
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
       </uri>
       <name>oak1</name>
-      <pose>-4.77393 12.2995 0 0 -0 0</pose>
+      <pose>-4.77393 12.2995 -0.3 0 -0 0</pose>
     </include>
     <include>
       <uri>
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
       </uri>
       <name>oak2</name>
-      <pose>2.99444 -4.95498 0 0 -0 0</pose>
+      <pose>2.99444 -4.95498 -0.3 0 -0 0.8</pose>
     </include>
     <include>
       <uri>
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
       </uri>
       <name>oak3</name>
-      <pose>-9.12426 -11.2689 0 0 -0 0</pose>
+      <pose>-9.12426 -11.2689 -0.3 0 -0 0.3</pose>
     </include>
     <include>
       <uri>
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
       </uri>
       <name>oak4</name>
-      <pose>4.21788 -1.41417 0 0 -0 0</pose>
+      <pose>4.21788 -1.41417 -0.3 0 -0 0.1</pose>
     </include>
     <include>
       <uri>
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
       </uri>
       <name>oak5</name>
-      <pose>-6.26553 5.00575 0 0 -0 0</pose>
+      <pose>-6.26553 5.00575 -0.3 0 -0 0.4</pose>
     </include>
     <include>
       <uri>
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
       </uri>
       <name>oak6</name>
-      <pose>-4.33701 1.32854 0 0 -0 0</pose>
+      <pose>-4.33701 1.32854 -0.3 0 -0 0</pose>
     </include>
     <include>
       <uri>
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
       </uri>
       <name>oak7</name>
-      <pose>-0.620372 10 0 0 -0 0</pose>
+      <pose>-0.620372 10 -0.3 0 -0 0.5</pose>
     </include>
     <include>
       <uri>
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak%20tree
       </uri>
       <name>oak8</name>
-      <pose>3.54698 5 0 0 -0 0</pose>
+      <pose>3.54698 5 -0.3 0 -0 0.1</pose>
     </include>
     
     <!-- Pine trees -->
@@ -201,21 +203,21 @@
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree
       </uri>
       <name>pine1</name>
-      <pose>6.05721 9.78933 0 0 -0 0</pose>
+      <pose>6.05721 9.78933 0 0 -0 0.1</pose>
     </include>
     <include>
       <uri>
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree
       </uri>
       <name>pine2</name>
-      <pose>-10.0184 8.85188 0 0 -0 0</pose>
+      <pose>-10.0184 8.85188 0 0 -0 0.3</pose>
     </include>
     <include>
       <uri>
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree
       </uri>
       <name>pine3</name>
-      <pose>-4.62343 -12.5618 0 0 -0 0</pose>
+      <pose>-4.62343 -12.5618 0 0 -0 0.2</pose>
     </include>
     <include>
       <uri>
@@ -229,14 +231,14 @@
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree
       </uri>
       <name>pine5</name>
-      <pose>-4.64898 -3.0329 0 0 -0 0</pose>
+      <pose>-4.64898 -3.0329 0 0 -0 0.5</pose>
     </include>
     <include>
       <uri>
         https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree
       </uri>
       <name>pine6</name>
-      <pose>-2.27195 -8.68441 0 0 -0 0</pose>
+      <pose>-2.27195 -8.68441 0 0 -0 0.9</pose>
     </include>
 
     <!-- Platypus -->
