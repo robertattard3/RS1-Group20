@@ -1,12 +1,12 @@
 <sdf version="1.7">
-<model name="grass_plane">
+<model name="forest_wall">
     <static>true</static>
     <link name="link">
         <collision name="collision">
             <geometry>
             <plane>
                 <normal>0 0 1</normal>
-                <size>25 25</size>
+                <size>9.32 4</size>
             </plane>
             </geometry>
         </collision>
@@ -15,7 +15,7 @@
             <geometry>
             <plane>
                 <normal>0 0 1</normal>
-                <size>25 25</size>
+                <size>9.32 4</size>
             </plane>
             </geometry>
             <material>
@@ -26,7 +26,7 @@
                 <pbr>
                     <metal>
                     <albedo_map>
-                        model://forest_plane/materials/textures/forest_overhead.png
+                        model://forest_wall/materials/textures/forest_wall_transparent.png
                     </albedo_map>
                     </metal>
                 </pbr>
