@@ -37,7 +37,7 @@ public:
   //So to allow to set a goal via topic we forfit having areturn value for now
   //At week 11 you can replace this with a service  
   // virtual bool setGoal(geometry_msgs::Point goal) = 0;
-  virtual void setGoal(const geometry_msgs::msg::PoseArray& msg) = 0; 
+  virtual void setGoal(const geometry_msgs::msg::PoseArray::SharedPtr msg) = 0; 
   
 
   /**

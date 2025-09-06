@@ -8,8 +8,8 @@ Quadcopter::Quadcopter(){
     move_u_d.data = 0.0;
     move_l_r.data = 0.0;
 
-    command_Pub  = this->create_publisher<geometry_msgs::msg::Twist>("drone/cmd_vel",3);  
-    takeOff_Pub = this->create_publisher<std_msgs::msg::Empty>("drone/takeoff",3); 
+    command_Pub  = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_nav",3);  
+    //takeOff_Pub = this->create_publisher<std_msgs::msg::Empty>("drone/takeoff",3); 
 
     // set flag to false 
     inZposition = false;
@@ -29,10 +29,12 @@ void Quadcopter::run(void){
 
     // while it has not reached the goal yet
             while (!goalReached && isDriving_ && goalSet_){
-                std::cout<<"In control"<<std::endl;
                 //updates the values needed to reach goal and check it is reachable
                 goalReachable = checkOriginToDestination(odom_, goal_.location, goal_.distance, goal_.time, estimatedGoalPose_);
-                
+                std::cout<<"State : "<<state<<std::endl;
+                std::cout<<"Angle Diff : "<<angleDifference<<std::endl;
+                std::cout<<"Distance : "<<goal_.distance<<std::endl;
+                std::cout<<"X Goal : "<<goal_.location.x<<std::endl;
                 // if it cannot reach the goal, returns false and exits function
                 if (!goalReachable){
                     state = controlQuad::State::STOPPING;
@@ -49,120 +51,82 @@ void Quadcopter::run(void){
                 // update the variable by calling the functions
                 timeTravelled();
 
-                if (inZposition && odom_.position.z - goal_.location.z < -0.2){
-                inZposition = false;
-                state = controlQuad::State::MOVEUP; 
-              }
+              //   if (inZposition && odom_.position.z - goal_.location.z < -0.2){
+              //   inZposition = false;
+              //   state = controlQuad::State::MOVEUP; 
+              // }
 
-              if (inZposition && odom_.position.z - goal_.location.z > 0.2){
-                inZposition = false;
-                state = controlQuad::State::MOVEDOWN; 
-              }
+              // if (inZposition && odom_.position.z - goal_.location.z > 0.2){
+              //   inZposition = false;
+              //   state = controlQuad::State::MOVEDOWN; 
+              // }
 
             switch(state)
               {   // initial state of quad when it is stable
                   case controlQuad::State::IDLE   : 
-                      if (goal_.distance > tolerance_ && !inZposition){ 
+                      if (goal_.distance > tolerance_ ){//&& !inZposition){ 
                           // accelerate when the distance to the goal is set and is greater than the tolerance
                           // start the timer when the quad starts moving
                           startTime = std::chrono::steady_clock::now();
-                          state = controlQuad::State::MOVEUP;
-                      }  
-                      else if (goal_.distance > tolerance_ && inZposition){
-                        state = controlQuad::State::TURN;
-                      }  
-                      else{
-                        if (odom_.position.z < 1){
-                          command(0.0, 0.0, 0.0, 0.0);
-                        }
-                      }
-                      break;
-                  // state when the quad is moving up
-                  case controlQuad::State::MOVEUP : 
-                      if (fabs(odom_.position.z - goal_.location.z) < 1e-1){ 
-                          // move to Turn state when close to the z goal
-                          command(move_f_b.data, move_l_r.data, turn_l_r.data, 0.0);
-                          inZposition = true;
                           state = controlQuad::State::TURN;
-                      }
-                      // if else for if it has gone way over z goal
-                      else if (odom_.position.z - goal_.location.z > 0.1){
-                        state = controlQuad::State::MOVEDOWN;
-                      }
+                      }  
+                      // else if (goal_.distance > tolerance_ && inZposition){
+                      //   state = controlQuad::State::TURN;
+                      // }  
                       else{
-                          // do MOVING UP
-                          if (odom_.position.z < 0.1){
-                            std::cout<<"Trying to takeoff"<<std::endl;
-                            std_msgs::msg::Empty message = std_msgs::msg::Empty();
-                            takeOff_Pub->publish(message);
-                          }
-                          else{
-                          command(0.6, move_l_r.data, turn_l_r.data, 0.5);
-                          if (angleDifference > 0){
-                            command(move_f_b.data, move_l_r.data, 0.5, move_u_d.data);
-                          }
-                          else{
-                            command(move_f_b.data, move_l_r.data, -0.5, move_u_d.data);
-                          }
-
-                          }
+                        //if (odom_.position.z < 1){
+                          command(0.0, 0.0, 0.0, 0.0);
+                        //}
                       }
                       break;
                   // state when the car needs to be slowed down as it is close to goal
                   case controlQuad::State::TURN : 
                       if (fabs(angleDifference) < 12e-1 && goal_.distance > 6){ //DO THIS
-                        command(1.0, move_l_r.data, turn_l_r.data, move_u_d.data);
+                        command(1.0, move_l_r.data, 0.0, move_u_d.data);
                         state = controlQuad::State::FORWARD;
                       }
                       else if (fabs(angleDifference) < 4e-1 && goal_.distance < 6){
-                        command(0.3, move_l_r.data, turn_l_r.data, move_u_d.data);
+                        command(0.3, move_l_r.data, 0.0, move_u_d.data);
                         state = controlQuad::State::FORWARD;
                       }
                       else{ 
                         // DO TURNING
-                        command(0.0, move_l_r.data, turn_l_r.data, move_u_d.data);
                         if (angleDifference > 0){
-                          command(move_f_b.data, move_l_r.data, 1.0, move_u_d.data);
+                          command(0.0, move_l_r.data, 1.0, move_u_d.data);
                         }
                         else{
-                          command(move_f_b.data, move_l_r.data, -1.0, move_u_d.data);
+                          command(0.0, move_l_r.data, -1.0, move_u_d.data);
                         }
                       }
                       break;
                   case controlQuad::State::FORWARD : 
-                      if (goal_.distance < (tolerance_+ 0.5) && move_f_b.data== 1.4){ 
+                      if (goal_.distance < tolerance_){ 
                           state = controlQuad::State::STOPPING;
                       }
-                      if (fabs(angleDifference) > 1.5e-1 && goal_.distance > (tolerance_ + 1)){
+                      else if (fabs(angleDifference) > 3e-1 && goal_.distance > (tolerance_ + 1)){
                         state = controlQuad::State::ADJUST;
                        }
-                      else if (goal_.distance < 1 && move_f_b.data< 0.1){
-                        command(0.3, move_l_r.data, 0.0, move_u_d.data);
-                      }
-                      else if (goal_.distance < tolerance_ && move_f_b.data < 1.4){
-                        state = controlQuad::State::STOPPING;
-                      }
                       else{ 
                         // DO MOVING FORWARD
-                        command(1.4, move_l_r.data, 0.0, move_u_d.data);
+                        command(1.0, move_l_r.data, 0.0, move_u_d.data);
                         
                       }
                       break;
                   case controlQuad::State::ADJUST : 
-                      if (goal_.distance < (tolerance_+ 0.2) && move_f_b.data == 1.0){ 
-                          state = controlQuad::State::STOPPING;
-                      }
-                      if (fabs(angleDifference) < 1e-1 || goal_.distance < (tolerance_ + 1)){ //DO THIS
+                      // if (goal_.distance < (tolerance_+ 0.2)) {//&& move_f_b.data == 1.0){ 
+                      //     state = controlQuad::State::STOPPING;
+                      // }
+                      if (fabs(angleDifference) < 2e-1){ //DO THIS
                         command(move_f_b.data, move_l_r.data, 0.0, move_u_d.data);
                         state = controlQuad::State::FORWARD;
                       }
 
                       else{ 
                         if (angleDifference > 0){
-                          command(move_f_b.data, move_l_r.data, 0.5, move_u_d.data);
+                          command(0.0, move_l_r.data, 0.3, move_u_d.data);
                         }
                         else{
-                          command(move_f_b.data, move_l_r.data, -0.5, move_u_d.data);
+                          command(0.0, move_l_r.data, -0.3, move_u_d.data);
                         }
                         
                       }
@@ -172,6 +136,7 @@ void Quadcopter::run(void){
                   case controlQuad::State::STOPPING :
                       // if the car has stopped within the tolerance, update values and return true
                       if (goal_.distance < tolerance_){ 
+                        std::cout<<"GOAL REACHED"<<std::endl;
                           // stop the timer when the car is stopped
                           command(0.0, 0.0, 0.0, 0.0);
                           endTime = std::chrono::steady_clock::now();
@@ -186,15 +151,6 @@ void Quadcopter::run(void){
                       else{ 
                         
                         command(0.0, 0.0, 0.0, 0.0);
-                      }
-                      break;
-                  case controlQuad::State::MOVEDOWN : 
-                      if (fabs(odom_.position.z - goal_.location.z) < 1e-1){ //DO THIS
-                        command(move_f_b.data, move_l_r.data, 0.0, 0.0);
-                        state = controlQuad::State::TURN;
-                      }
-                      else{ 
-                        command(move_f_b.data, move_l_r.data, 0.0, -0.2);
                       }
                       break;
                   default:

@@ -13,6 +13,7 @@
 #include "nav_msgs/msg/odometry.hpp"
 #include "geometry_msgs/msg/pose_array.hpp"
 #include "std_msgs/msg/float64.hpp"
+#include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
 #include <deque>
 
 /*!
@@ -42,7 +43,7 @@ class Controller : public ControllerInterface, public rclcpp::Node
   @param goals
   @return all goal reachable, in order supplied
   */
- void setGoal(const geometry_msgs::msg::PoseArray& msg);
+ void setGoal(const geometry_msgs::msg::PoseArray::SharedPtr msg);
  
  /*!
   * @brief Set tolerance when reaching goal
@@ -83,7 +84,7 @@ class Controller : public ControllerInterface, public rclcpp::Node
  /*!
   * @brief Updates the odometry of the vehicle every time it is published to the topic
   */
- void odoCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
+ void odoCallback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg);
 
  /*!
   * @brief When the service is called, this runs the control logic for reaching the goal
@@ -161,7 +162,7 @@ protected:
  bool goalSet_; //!< Flag indicating if a goal has been set
 
  // subscribers
- rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odometrySub_; //!< Subscription to odometry
+ rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr odometrySub_; //!< Subscription to odometry
  rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr goalsSub_; //!< Subscription to goals
  rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr missionService_; //!< Service for mission
 

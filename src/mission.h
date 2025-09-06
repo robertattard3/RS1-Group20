@@ -16,6 +16,8 @@ private:
     void sendGoals();
     rclcpp::Publisher<geometry_msgs::msg::PoseArray>::SharedPtr goal_pub_;
     geometry_msgs::msg::PoseArray goal_array;
+    rclcpp::TimerBase::SharedPtr timer_;
+
 };
 
 #endif // MISSION_H
