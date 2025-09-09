@@ -19,12 +19,10 @@
 namespace controlQuad {
   enum State {
       IDLE, /*!< IDLE state of control, when the drone is not moving */
-      MOVEUP, /*!< MOVEUP state of control, when the drone needs to move up to the z goal */
       TURN, /*!< TURN state of control, when the drone needs to turn to face the direction of the goal */
       FORWARD, /*!< FORWARD state of control, when the drone is moving towards the target goal */
       ADJUST, /*!< ADJUST state of control, when the drone is moving towards the goal, and needs to readjust to face the goal */
       STOPPING, /*!< STOPPING state of control, when the drone is close to the goal and is stopping */
-      MOVEDOWN /*!< MOVEDOWN state of control, when the drone is moving too high and needs to move down to the z goal */
   };
 }
 

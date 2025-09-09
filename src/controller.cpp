@@ -38,7 +38,6 @@ Controller::~Controller(){
 void Controller::setGoal(const geometry_msgs::msg::PoseArray::SharedPtr msg){
 
     std::lock_guard<std::mutex> lock(goalMtx_);
-    std::cout<<"Here"<<std::endl;
     goals_.clear();
     for (const auto& pose : msg->poses) {
         goals_.push_back(pose.position);
@@ -48,7 +47,7 @@ void Controller::setGoal(const geometry_msgs::msg::PoseArray::SharedPtr msg){
     goalSet_ = true;
     getTotalDistance();
     percentComplete();
-    std::cout<<"Goals Set"<<std::endl;
+    std::cout<<"Goals Recieved"<<std::endl;
 }
 
 double Controller::distanceToGoal(void){
@@ -137,7 +136,6 @@ void Controller::runMission(const std::shared_ptr<std_srvs::srv::SetBool::Reques
     if (req->data){
         threads_.emplace_back(&Controller::run, this);
         goalSet_ = true;
-        std::cout<<"Here after service call"<<std::endl;
     }
     else{
         goalSet_ = false;
