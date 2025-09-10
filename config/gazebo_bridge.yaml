@@ -14,7 +14,7 @@
 
 # # Odometry (published by ignition::gazebo::systems::OdometryPublisher)
 - ros_topic_name: '/odometry'
-  gz_topic_name: '/model/husky/odometry'
+  gz_topic_name: '/model/parrot/odometry'
   ros_type_name: 'nav_msgs/msg/Odometry'
   gz_type_name: 'ignition.msgs.Odometry'
   direction: GZ_TO_ROS
