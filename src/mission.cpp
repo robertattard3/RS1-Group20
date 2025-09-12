@@ -23,9 +23,18 @@ void Mission::sendGoals()
 
     std::vector<V3> goals;
     
-    goals.push_back({7.0, 0.0, 2.0});
-    goals.push_back({-5.0, 3.0, 2.0});
-    goals.push_back({3.0, 2.0, 2.0});
+    goals.push_back({9.0, 9.0, 2.0});
+    goals.push_back({9.0, -9.0, 2.0});
+    goals.push_back({-9.0, 9.0, 2.0});
+    goals.push_back({-9.0, -9.0, 2.0});
+    goals.push_back({9.0, 0.0, 2.0});
+    goals.push_back({-9.0, 0.0, 2.0});
+    goals.push_back({0.0, 9.0, 2.0});
+    goals.push_back({0.0, -9.0, 2.0});
+    goals.push_back({4.0, 4.0, 2.0});
+    goals.push_back({-4.0, 4.0, 2.0});
+    goals.push_back({4.0, -4.0, 2.0});
+    goals.push_back({-4.0, -4.0, 2.0});
 
     V3 start{odom_.x, odom_.y, odom_.z};
     auto route = tsp_order_open(start, goals);

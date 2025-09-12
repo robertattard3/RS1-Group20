@@ -69,6 +69,7 @@ public:
     double angleDifference; /*!< variable storee the angle difference between the current orientation and goal orientation*/
     controlQuad::State state; /*!< creating object of the control quadcopter enum*/
     bool inZposition; /*!< a bool check if the drone is in the z position*/
+    double setSpeed;
 
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr move_f_bPub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr move_l_rPub_;

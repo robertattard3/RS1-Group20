@@ -7,6 +7,7 @@ Quadcopter::Quadcopter(){
     turn_l_r.data = 0.0;
     move_u_d.data = 0.0;
     move_l_r.data = 0.0;
+    setSpeed = 2.0;
 
     command_Pub  = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel_nav",3);  
     //takeOff_Pub = this->create_publisher<std_msgs::msg::Empty>("drone/takeoff",3); 
@@ -63,13 +64,9 @@ void Quadcopter::run(void){
                   // state when the car needs to be slowed down as it is close to goal
                   case controlQuad::State::TURN : 
                       if (fabs(angleDifference) < 12e-1){ //&& goal_.distance > 6){ //DO THIS
-                        command(1.0, move_l_r.data, turn_l_r.data, move_u_d.data);
+                        command(setSpeed, move_l_r.data, turn_l_r.data, move_u_d.data);
                         state = controlQuad::State::FORWARD;
                       }
-                      // else if (fabs(angleDifference) < 4e-1 && goal_.distance < 6){
-                      //   command(0.3, move_l_r.data, turn_l_r.data, move_u_d.data);
-                      //   state = controlQuad::State::FORWARD;
-                      // }
                       else{ 
                         // DO TURNING
                         if (angleDifference > 0){
@@ -84,15 +81,12 @@ void Quadcopter::run(void){
                       if (fabs(angleDifference) > 1.5e-1 && goal_.distance > (tolerance_ + 0.5)){
                         state = controlQuad::State::ADJUST;
                        }
-                      else if (goal_.distance < 1 && move_f_b.data< 0.1){
-                        command(0.3, move_l_r.data, 0.0, move_u_d.data);
-                      }
                       else if (goal_.distance < tolerance_){
                         state = controlQuad::State::STOPPING;
                       }
                       else{ 
                         // DO MOVING FORWARD
-                        command(1.4, move_l_r.data, 0.0, move_u_d.data);
+                        command(setSpeed, move_l_r.data, 0.0, move_u_d.data);
                         
                       }
                       break;
@@ -121,7 +115,7 @@ void Quadcopter::run(void){
                       // if the car has stopped within the tolerance, update values and return true
                       if (goal_.distance < tolerance_){ 
                           // stop the timer when the car is stopped
-                          command(0.0, 0.0, 0.0, 0.0);
+                          command(setSpeed, 0.0, 0.0, 0.0);
                           endTime = std::chrono::steady_clock::now();
                           std::cout<<"GOAL REACHED"<<std::endl;
                           // indicate the goal was reached within the tolerance
