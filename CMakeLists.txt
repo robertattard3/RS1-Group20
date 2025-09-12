@@ -29,7 +29,7 @@ ament_target_dependencies(quadcopter rclcpp std_msgs nav_msgs tf2 tf2_ros tf2_ge
 
 add_executable(navigation src/mission_main.cpp src/mission.cpp)
 target_link_libraries(navigation)
-ament_target_dependencies(navigation rclcpp geometry_msgs std_msgs)
+ament_target_dependencies(navigation rclcpp geometry_msgs std_msgs nav_msgs)
 
 install(TARGETS
   controller_lib

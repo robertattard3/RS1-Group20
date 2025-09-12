@@ -2,7 +2,7 @@
 
 Controller::Controller() : Node("controller") {
    
-    odometrySub_ = this->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>("/pose", 10, std::bind(&Controller::odoCallback, this, std::placeholders::_1));
+    odometrySub_ = this->create_subscription<nav_msgs::msg::Odometry>("/odometry", 10, std::bind(&Controller::odoCallback, this, std::placeholders::_1));
     goalsSub_ = this->create_subscription<geometry_msgs::msg::PoseArray>("/mission/goals", 1000, std::bind(&Controller::setGoal, this, std::placeholders::_1));
 
     missionService_ = this->create_service<std_srvs::srv::SetBool>("/drone/mission",std::bind(&Controller::runMission, this, std::placeholders::_1, std::placeholders::_2));
@@ -125,7 +125,7 @@ double Controller::timeTravelled(void){
 }
 
 
-void Controller::odoCallback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg){
+void Controller::odoCallback(const nav_msgs::msg::Odometry::SharedPtr msg){
     std::lock_guard<std::mutex> lock(poseMtx_);
     odom_ = msg->pose.pose;
 }
