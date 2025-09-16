@@ -141,7 +141,6 @@
 
         <!-- All Pine Trees -->
 
-    <!-- Pines replacing former Oaks -->
     <include>
       <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri>
       <name>pine1</name>
@@ -330,49 +329,13 @@
       <name>rock8</name>
       <pose>8 -8 0 0 0 0</pose>
     </include>
-    
-        <!-- Person in bottom-left corner -->
-    <include>
-      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Person%20Standing</uri>
-      <name>person1</name>
-      <pose>-11 -11 0 0 0 0</pose>
-    </include>
+ 
+   <include>
+    <uri>model://person_standing</uri>
+    <name>person1</name>
+    <pose>-11 -11 0 0 0 0</pose>
+   </include>
 
-    <!-- Tree stumps -->
-    <include>
-      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Tree%20Stump</uri>
-      <name>stump1</name>
-      <pose>-6 3 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Tree%20Stump</uri>
-      <name>stump2</name>
-      <pose>7 -4 0 0 0 0</pose>
-    </include>
-
-    <!-- Fallen tree -->
-    <include>
-      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Fallen%20Tree</uri>
-      <name>fallen_tree1</name>
-      <pose>2 -8 0 0 0 1.57</pose>
-    </include>
-
-    <!-- Bushes -->
-    <include>
-      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Bush</uri>
-      <name>bush1</name>
-      <pose>-3 -6 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Bush</uri>
-      <name>bush2</name>
-      <pose>4 6 0 0 0 0</pose>
-    </include>
-    <include>
-      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Bush</uri>
-      <name>bush3</name>
-      <pose>-7 9 0 0 0 0</pose>
-    </include>
 
   </world>
 </sdf>
