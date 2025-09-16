@@ -13,6 +13,7 @@
   <depend>rqt_gui</depend>
   <depend>rqt_gui_py</depend>
   <depend>python_qt_binding</depend>
+  <depend>std_srvs</depend>
 
   <export>
     <build_type>ament_python</build_type>
