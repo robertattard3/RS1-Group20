@@ -17,23 +17,14 @@ find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
-
-# Controller library
-add_library(controller_lib src/controller.cpp src/quadcopter.cpp)
-ament_target_dependencies(controller_lib rclcpp std_msgs nav_msgs std_srvs tf2 tf2_ros tf2_geometry_msgs geometry_msgs)
-
-# Quadcopter executable
-add_executable(quadcopter src/quadcopter_main.cpp)
-target_link_libraries(quadcopter controller_lib)
-ament_target_dependencies(quadcopter rclcpp std_msgs nav_msgs tf2 tf2_ros tf2_geometry_msgs std_srvs) 
+find_package(nav2_msgs REQUIRED)
+find_package(rclcpp_action REQUIRED)
 
 add_executable(navigation src/mission_main.cpp src/mission.cpp)
 target_link_libraries(navigation)
-ament_target_dependencies(navigation rclcpp geometry_msgs std_msgs nav_msgs)
+ament_target_dependencies(navigation rclcpp geometry_msgs std_msgs nav_msgs nav2_msgs rclcpp_action)
 
 install(TARGETS
-  controller_lib
-  quadcopter
   navigation
   DESTINATION lib/${PROJECT_NAME}
 )

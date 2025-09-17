@@ -1,59 +1,48 @@
 #include "mission.h"
-#include "tsp_helper.h"
 
 Mission::Mission() : Node("navigation")
 {
-    have_pose_ = false;
-    
-    goal_pub_ = this->create_publisher<geometry_msgs::msg::PoseArray>("/mission/goals", 10);
-    odom_Sub_ = this->create_subscription<nav_msgs::msg::Odometry>("/odometry", 10, std::bind(&Mission::odomCallback, this, std::placeholders::_1));
 
-    // Wait 200 ms, then call sendGoals()
-    timer_ = this->create_wall_timer(
-        std::chrono::milliseconds(200),
-        std::bind(&Mission::sendGoals, this));
+    client_ = rclcpp_action::create_client<NavigateToPose>(this,"navigate_to_pose");
+
+    sendGoal(10.0,2.0);
 }
 
-void Mission::sendGoals()
+
+void Mission::sendGoal(double x, double y)
 {
-    if (goal_pub_->get_subscription_count() == 0 || !have_pose_) {
-        std::cout<<"Waiting for subscribers..."<<std::endl;
-        return; 
+  if (!client_->wait_for_action_server(std::chrono::seconds(10))) {
+    RCLCPP_ERROR(get_logger(), "navigate_to_pose action server not available");
+    return;
+  }
+
+  // Build PoseStamped (Nav2 is 2D; keep z constant)
+  geometry_msgs::msg::PoseStamped ps;
+  ps.header.frame_id = "map";
+  ps.header.stamp = this->now();
+  ps.pose.position.x = x;
+  ps.pose.position.y = y;
+
+  NavigateToPose::Goal goal;
+  goal.pose = ps;
+
+  RCLCPP_INFO(get_logger(), "Navigating to goal: x=%.2f, y=%.2f", x, y);
+
+  auto opts = rclcpp_action::Client<NavigateToPose>::SendGoalOptions();
+  opts.goal_response_callback = [this](GoalHandleNavigateToPose::SharedPtr handle){
+    if (!handle) {
+      RCLCPP_WARN(this->get_logger(), "Goal rejected by server.");
+    } else {
+      RCLCPP_INFO(this->get_logger(), "Goal accepted.");
     }
+  };
+  opts.result_callback =
+    [this](const GoalHandleNavigateToPose::WrappedResult & result) {
+      RCLCPP_INFO(this->get_logger(), "Navigation finished with result code: %d",
+                  static_cast<int>(result.code));
+      
+    };
 
-    std::vector<V3> goals;
-    
-    goals.push_back({9.0, 9.0, 2.0});
-    goals.push_back({9.0, -9.0, 2.0});
-    goals.push_back({-9.0, 9.0, 2.0});
-    goals.push_back({-9.0, -9.0, 2.0});
-    goals.push_back({9.0, 0.0, 2.0});
-    goals.push_back({-9.0, 0.0, 2.0});
-    goals.push_back({0.0, 9.0, 2.0});
-    goals.push_back({0.0, -9.0, 2.0});
-    goals.push_back({4.0, 4.0, 2.0});
-    goals.push_back({-4.0, 4.0, 2.0});
-    goals.push_back({4.0, -4.0, 2.0});
-    goals.push_back({-4.0, -4.0, 2.0});
-
-    V3 start{odom_.x, odom_.y, odom_.z};
-    auto route = tsp_order_open(start, goals);
-
-    for (const auto &p : route) {
-        geometry_msgs::msg::Pose pose;
-        pose.position.x = p.x;
-        pose.position.y = p.y;
-        pose.position.z = p.z;
-        goal_array.poses.push_back(pose);
-    } 
-
-    goal_pub_->publish(goal_array);
-    std::cout<<"NAV GOALS SET"<<std::endl;
-
-    timer_->cancel();
+  client_->async_send_goal(goal, opts);
 }
 
-void Mission::odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg){
-    have_pose_ = true;
-    odom_= msg->pose.pose.position;
-}
