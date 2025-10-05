@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Macro that adds mounted sensors (RGBD + Thermal) to the Parrot -->
+  <xacro:macro name="parrot_gz_extensions" params="">
+
+    <!-- ================= IMU on imu_link ================= -->
+    <gazebo reference="imu_link">
+      <sensor type="imu" name="parrot_imu">
+        <always_on>true</always_on>
+        <update_rate>100</update_rate>
+        <topic>/parrot/imu</topic>
+        <gz_frame_id>imu_link</gz_frame_id>
+      </sensor>
+    </gazebo>
+
+    <!-- ================ GPU lidar on base_scan ================ -->
+    <gazebo reference="base_scan">
+      <sensor type="gpu_lidar" name="parrot_lidar">
+        <always_on>true</always_on>
+        <update_rate>10</update_rate>
+        <topic>/parrot/scan</topic>
+        <gz_frame_id>base_scan</gz_frame_id>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>360</samples>
+              <resolution>1</resolution>
+              <min_angle>0.0</min_angle>
+              <max_angle>6.28319</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.2</min>
+            <max>40</max>
+            <resolution>0.015</resolution>
+          </range>
+        </ray>
+      </sensor>
+    </gazebo>
+
+    <!-- ============ RGBD camera mounted on camera_link ============ -->
+    <gazebo reference="camera_link">
+      <sensor name="parrot_rgbd" type="rgbd_camera">
+        <always_on>1</always_on>
+        <update_rate>10</update_rate>
+        <!-- Base topic; Gazebo publishes /image, /depth_image, /points, /camera_info -->
+        <topic>/parrot/camera</topic>
+        <gz_frame_id>camera_link</gz_frame_id>
+        <camera>
+          <horizontal_fov>2.0944</horizontal_fov>
+          <image>
+            <width>720</width>
+            <height>480</height>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>40</far>
+          </clip>
+          <depth_camera>
+            <clip>
+              <near>0.4</near>
+              <far>10</far>
+            </clip>
+          </depth_camera>
+        </camera>
+      </sensor>
+    </gazebo>
+
+    <!-- ===== Thermal camera: link + joint so it follows the drone ===== -->
+    <link name="thermal_cam_link">
+      <inertial>
+        <mass value="0.05"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
+      </inertial>
+      <!-- tiny visual so you can see the sensor position -->
+      <visual name="thermal_cam_vis">
+        <origin xyz="0 0 0"/>
+        <geometry><box size="0.03 0.03 0.03"/></geometry>
+      </visual>
+    </link>
+
+    <joint name="thermal_cam_joint" type="fixed">
+      <parent link="camera_link"/>
+      <child  link="thermal_cam_link"/>
+      <!-- forward offset from the mast; same orientation as camera_link -->
+      <origin xyz="0.06 0 0" rpy="0 0 0"/>
+      <!-- for a nadir (down-looking) camera, use rpy="0 -1.570796 0" -->
+    </joint>
+
+    <!-- ============ Thermal sensors on thermal_cam_link ============ -->
+    <gazebo reference="thermal_cam_link">
+      <!-- 16-bit temperature image (good for processing) -->
+      <sensor name="parrot_thermal_l16" type="thermal">
+        <always_on>1</always_on>
+        <update_rate>15</update_rate>
+        <visualize>true</visualize>
+        <topic>/parrot/thermal/image_raw</topic>
+        <gz_frame_id>thermal_cam_link</gz_frame_id>
+        <camera>
+          <horizontal_fov>1.047</horizontal_fov>
+          <image>
+            <width>320</width>
+            <height>240</height>
+            <format>L16</format>
+          </image>
+          <clip><near>0.05</near><far>100</far></clip>
+        </camera>
+      </sensor>
+
+      <!-- 8-bit grayscale (easy to view in the GUI) -->
+      <sensor name="parrot_thermal_l8" type="thermal">
+        <always_on>1</always_on>
+        <update_rate>15</update_rate>
+        <visualize>true</visualize>
+        <topic>/parrot/thermal/image_mono8</topic>
+        <gz_frame_id>thermal_cam_link</gz_frame_id>
+        <camera>
+          <horizontal_fov>1.047</horizontal_fov>
+          <image>
+            <width>320</width>
+            <height>240</height>
+            <format>L8</format>
+          </image>
+          <clip><near>0.05</near><far>100</far></clip>
+        </camera>
+      </sensor>
+    </gazebo>
+
+  </xacro:macro>
+</robot>
+

@@ -1,0 +1,18 @@
+# colcon
+build/
+install/
+log/
+.colcon*
+
+# Python
+__pycache__/
+*.pyc
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Misc
+*.swp

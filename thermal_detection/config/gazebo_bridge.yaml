@@ -1,0 +1,75 @@
+# Clock (always needed for /use_sim_time)
+- ros_topic_name: /clock
+  gz_topic_name: /clock
+  ros_type_name: rosgraph_msgs/msg/Clock
+  gz_type_name: gz.msgs.Clock
+  direction: GZ_TO_ROS
+
+# Odometry (from drone model)
+- ros_topic_name: /odometry
+  gz_topic_name: /model/parrot/odometry
+  ros_type_name: nav_msgs/msg/Odometry
+  gz_type_name: ignition.msgs.Odometry
+  direction: GZ_TO_ROS
+
+# IMU (if your Parrot URDF/SDF has an imu sensor plugin)
+- ros_topic_name: /imu
+  gz_topic_name: /model/parrot/imu
+  ros_type_name: sensor_msgs/msg/Imu
+  gz_type_name: ignition.msgs.IMU
+  direction: GZ_TO_ROS
+
+# Command velocity — Nav2 will publish here
+- ros_topic_name: /cmd_vel
+  gz_topic_name: /model/parrot/cmd_vel
+  ros_type_name: geometry_msgs/msg/Twist
+  gz_type_name: ignition.msgs.Twist
+  direction: ROS_TO_GZ
+
+# RGB camera
+- ros_topic_name: /camera/image
+  gz_topic_name: /model/parrot/camera/image
+  ros_type_name: sensor_msgs/msg/Image
+  gz_type_name: ignition.msgs.Image
+  direction: GZ_TO_ROS
+
+# Depth image
+- ros_topic_name: /camera/depth/image
+  gz_topic_name: /model/parrot/camera/depth_image
+  ros_type_name: sensor_msgs/msg/Image
+  gz_type_name: ignition.msgs.Image
+  direction: GZ_TO_ROS
+
+# Depth camera info (needed for depthimage_to_laserscan)
+- ros_topic_name: /camera/depth/camera_info
+  gz_topic_name: /model/parrot/camera/depth_camera_info
+  ros_type_name: sensor_msgs/msg/CameraInfo
+  gz_type_name: ignition.msgs.CameraInfo
+  direction: GZ_TO_ROS
+
+# Depth pointcloud (optional but useful for debugging)
+- ros_topic_name: /camera/depth/points
+  gz_topic_name: /model/parrot/camera/points
+  ros_type_name: sensor_msgs/msg/PointCloud2
+  gz_type_name: ignition.msgs.PointCloudPacked
+  direction: GZ_TO_ROS
+  
+  # Parrot velocity command (ROS -> GZ)
+- ros_topic_name: "/model/parrot/cmd_vel"
+  gz_topic_name: "/model/parrot/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "ignition.msgs.Twist"
+  direction: ROS_TO_GZ
+  
+  - topic_name: /parrot/thermal/image_raw
+  ros_type_name: sensor_msgs/msg/Image
+  gz_type_name: ignition.msgs.Image
+  direction: GZ_TO_ROS
+
+- topic_name: /parrot/thermal/camera_info
+  ros_type_name: sensor_msgs/msg/CameraInfo
+  gz_type_name: ignition.msgs.CameraInfo
+  direction: GZ_TO_ROS
+
+
+
