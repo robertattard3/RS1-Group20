@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, ExecuteProcess
 from launch.conditions import IfCondition
 from launch.substitutions import (Command, LaunchConfiguration,
                                   PathJoinSubstitution)
@@ -115,6 +115,20 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration('rviz'))
     )
     ld.add_action(rviz_node)
+ 
+ # --- LiDAR filter node ---
+    lidar_filter_node = Node(
+        package='lidar_filter',
+        executable='lidar_filter_node',
+        output='screen',
+        parameters=[{'fov_deg': 90.0,    # optional, customize FoV
+                    'max_range': 15.0}], # optional, max range
+        #remappings=[
+           # ('/scan', '/scan_raw'),           # raw input
+          #  ('/scan_filtered', '/scan')  # filtered output
+        #]
+    )
+    ld.add_action(lidar_filter_node)
 
     # Nav2 enables mapping and waypoint following
     nav2 = IncludeLaunchDescription(
@@ -126,6 +140,30 @@ def generate_launch_description():
         }.items(),
         condition=IfCondition(LaunchConfiguration('nav2'))
     )
-    ld.add_action(nav2)
+    ld.add_action(nav2)   
+
+    # Search_and_rescue navigation node (manual navigation)
+    navigation_node = Node(
+        package='search_and_rescue',
+        executable='navigation',
+        name='search_and_rescue',
+        output='screen',
+        parameters=[{'use_sim_time': use_sim_time}]
+    )
+    ld.add_action(navigation_node)
+
+    # Explore Lite launch file (autonomous navigation)
+    explore_launch = IncludeLaunchDescription(
+        PathJoinSubstitution([FindPackageShare('explore_lite'), 'launch', 'explore.launch.py']),
+        launch_arguments={'use_sim_time': use_sim_time}.items()
+    )
+    ld.add_action(explore_launch)
+
+    # RQT (graphical tool)
+    rqt_process = ExecuteProcess(
+        cmd=['rqt', '--force-discover'],
+        output='screen'
+    )
+    ld.add_action(rqt_process)
 
     return ld
