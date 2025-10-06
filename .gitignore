@@ -1,0 +1,15 @@
+# VSCode settings folder
+.vscode/
+
+# ROS2 build folders
+build/
+install/
+log/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Python cache (if any)
+__pycache__/
+*.pyc
