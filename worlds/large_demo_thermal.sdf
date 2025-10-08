@@ -1,125 +1,254 @@
-<?xml version="1.0"?>
-<sdf version="1.7">
-  <world name="w">
-
-    <!-- Core systems -->
-    <plugin filename="ignition-gazebo-sensors-system"
-            name="ignition::gazebo::systems::Sensors">
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="demo">
+    <!-- Core systems (matching the working thermal_camera.sdf) -->
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+    <plugin filename="gz-sim-physics-system"           name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-sensors-system"           name="gz::sim::systems::Sensors">
       <render_engine>ogre2</render_engine>
     </plugin>
-    <plugin filename="ignition-gazebo-scene-broadcaster-system"
-            name="ignition::gazebo::systems::SceneBroadcaster"/>
-    <plugin filename="ignition-gazebo-user-commands-system"
-            name="ignition::gazebo::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-user-commands-system"     name="gz::sim::systems::UserCommands"/>
 
-    <!-- Light + atmosphere -->
-    <light name="sun" type="directional">
+    <!-- GUI: leave image panes topic-pickable so you can select the drone topics -->
+    <gui fullscreen="0">
+      <plugin filename="MinimalScene" name="3D View">
+        <gz-gui>
+          <title>3D View</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="string" key="state">docked</property>
+        </gz-gui>
+        <engine>ogre2</engine>
+        <scene>scene</scene>
+        <ambient_light>0.4 0.4 0.4 1</ambient_light>
+        <background_color>0.8 0.8 0.8 1</background_color>
+        <camera_pose>-6 0 6 0 0.5 0</camera_pose>
+      </plugin>
+
+      <plugin filename="EntityContextMenuPlugin" name="Entity context menu">
+        <gz-gui>
+          <property key="state" type="string">floating</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="GzSceneManager" name="Scene Manager">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="InteractiveViewControl" name="Interactive view control">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="CameraTracking" name="Camera Tracking">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="WorldControl" name="World control">
+        <gz-gui>
+          <title>World control</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="bool" key="resizable">false</property>
+          <property type="double" key="height">72</property>
+          <property type="double" key="z">1</property>
+          <property type="string" key="state">floating</property>
+          <anchors target="3D View">
+            <line own="left" target="left"/>
+            <line own="bottom" target="bottom"/>
+          </anchors>
+        </gz-gui>
+        <play_pause>true</play_pause>
+        <step>true</step>
+        <start_paused>true</start_paused>
+        <use_event>true</use_event>
+      </plugin>
+      <plugin filename="WorldStats" name="World stats">
+        <gz-gui>
+          <title>World stats</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="bool" key="resizable">false</property>
+          <property type="double" key="height">110</property>
+          <property type="double" key="width">290</property>
+          <property type="double" key="z">1</property>
+          <property type="string" key="state">floating</property>
+          <anchors target="3D View">
+            <line own="right" target="right"/>
+            <line own="bottom" target="bottom"/>
+          </anchors>
+        </gz-gui>
+        <sim_time>true</sim_time>
+        <real_time>true</real_time>
+        <real_time_factor>true</real_time_factor>
+        <iterations>true</iterations>
+      </plugin>
+      <plugin filename="ComponentInspector" name="Component inspector">
+        <gz-gui><property type="string" key="state">docked</property></gz-gui>
+      </plugin>
+      <plugin filename="EntityTree" name="Entity tree">
+        <gz-gui><property type="string" key="state">docked</property></gz-gui>
+      </plugin>
+      <plugin filename="TransformControl" name="Transform control"/>
+      <plugin filename="SelectEntities" name="Select Entities">
+        <gz-gui>
+          <anchors target="Select entities">
+            <line own="right" target="right"/>
+            <line own="top" target="top"/>
+          </anchors>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+
+      <!-- Thermal panel: subscribe to the 8-bit stream -->
+	<plugin filename="ImageDisplay" name="Thermal 8-bit">
+  	<gz-gui>
+    	<title>Thermal 8-bit</title>
+    	<property key="state" type="string">floating</property>
+    	<property type="double" key="width">360</property>
+   	<property type="double" key="height">300</property>
+  	</gz-gui>
+  	<topic>/parrot/thermal/image_mono8</topic>
+  	<topic_picker>false</topic_picker>
+	</plugin>
+
+	<!-- RGB panel: subscribe to RGB image -->
+	<plugin filename="ImageDisplay" name="RGB">
+  	<gz-gui>
+    	<title>RGB</title>
+    	<property key="state" type="string">floating</property>
+    	<property type="double" key="width">360</property>
+   	<property type="double" key="height">300</property>
+   	<property type="double" key="x">400</property>
+  	</gz-gui>
+  	<topic>/parrot/camera/image</topic>
+  	<topic_picker>false</topic_picker>
+	</plugin>
+	</gui>
+
+    <!-- Environment: Cold ambient everywhere unless a visual has Thermal plugin -->
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 100 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
       <direction>-0.5 0.1 -0.9</direction>
+      <intensity>5</intensity>
     </light>
+
     <atmosphere type="adiabatic">
-      <temperature>300</temperature>
+      <temperature>280</temperature>           <!-- cold background -->
       <temperature_gradient>0.0</temperature_gradient>
     </atmosphere>
 
-    <!-- Ground plane with neutral thermal -->
-    <model name="ground_plane">
+    <!-- ===== Large forest scene ===== -->
+    <include><uri>model://forest_plane</uri><name>forest_plane</name><pose>0 0 0 0 0 0</pose></include>
+
+    <!-- Forest walls -->
+    <include><uri>model://forest_wall</uri><name>forest_wall1</name><pose>12.5 0 2 1.570796 0 -1.570796</pose></include>
+    <include><uri>model://forest_wall</uri><name>forest_wall2</name><pose>12.5 -9.32 2 1.570796 0 -1.570796</pose></include>
+    <include><uri>model://forest_wall</uri><name>forest_wall3</name><pose>12.5  9.32 2 1.570796 0 -1.570796</pose></include>
+    <include><uri>model://forest_wall</uri><name>forest_wall4</name><pose>-12.5 0 2 1.570796 0  1.570796</pose></include>
+    <include><uri>model://forest_wall</uri><name>forest_wall5</name><pose>-12.5 -9.32 2 1.570796 0  1.570796</pose></include>
+    <include><uri>model://forest_wall</uri><name>forest_wall6</name><pose>-12.5  9.32 2 1.570796 0  1.570796</pose></include>
+    <include><uri>model://forest_wall</uri><name>forest_wall7</name><pose>0 -12.5 2 1.570796 0 3.14</pose></include>
+    <include><uri>model://forest_wall</uri><name>forest_wall8</name><pose>-9.32 -12.5 2 1.570796 0 3.14</pose></include>
+    <include><uri>model://forest_wall</uri><name>forest_wall9</name><pose> 9.32 -12.5 2 1.570796 0 3.14</pose></include>
+    <include><uri>model://forest_wall</uri><name>forest_wall10</name><pose>0 12.5 2 1.570796 0 0</pose></include>
+    <include><uri>model://forest_wall</uri><name>forest_wall11</name><pose>-9.32 12.5 2 1.570796 0 0</pose></include>
+    <include><uri>model://forest_wall</uri><name>forest_wall12</name><pose> 9.32 12.5 2 1.570796 0 0</pose></include>
+
+    <!-- Pines (Fuel) -->
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine1</name><pose>-4.77393 12.2995 -0.3 0 0 0</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine2</name><pose>2.99444 -4.95498 -0.3 0 0 0.8</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine3</name><pose>-9.12426 -11.2689 -0.3 0 0 0.3</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine4</name><pose>6.21788 -1.41417 -0.3 0 0 0.1</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine5</name><pose>-6.26553 5.00575 -0.3 0 0 0.4</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine6</name><pose>-4.33701 1.32854 -0.3 0 0 0</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine7</name><pose>-0.620372 10 -0.3 0 0 0.5</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine8</name><pose>3.54698 5 -0.3 0 0 0.1</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine9</name><pose>6.05721 9.78933 0 0 0 0.1</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine10</name><pose>-10.0184 8.85188 0 0 0 0.3</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine11</name><pose>-4.62343 -12.5618 0 0 0 0.2</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine12</name><pose>7.08738 1.33612 0 0 0 0</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine13</name><pose>-4.64898 -3.0329 0 0 0 0.5</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine14</name><pose>-2.27195 -8.68441 0 0 0 0.9</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine15</name><pose>-3 5 0 0 0 0.2</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine16</name><pose>2 5 0 0 0 0.4</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine17</name><pose>0 4.5 0 0 0 0.3</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine18</name><pose>-9 5 0 0 0 0.6</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine19</name><pose>-8 2 0 0 0 0</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine20</name><pose>-10 0 0 0 0 0.1</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine21</name><pose>-10 -2 0 0 0 0.2</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine22</name><pose>-9 -1.5 0 0 0 0.3</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine23</name><pose>5 7 0 0 0 0.4</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine24</name><pose>6 8 0 0 0 0.5</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine25</name><pose>-5 7 0 0 0 0.6</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine%20tree</uri><name>pine26</name><pose>-5 -8 0 0 0 0.7</pose></include>
+
+    <!-- Rocks (Fuel) -->
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Falling%20Rock%201</uri><name>rock1</name><pose>-6.30926 -8.38159 0 0 0 0</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Falling%20Rock%202</uri><name>rock2</name><pose>-8.27162 -6.19647 0 0 0 0</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Falling%20Rock%203</uri><name>rock3</name><pose>-9.2841 -4.61803 0 0 0 0</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Falling%20Rock%201</uri><name>rock4</name><pose>-10 -12 0 0 0 0</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Falling%20Rock%202</uri><name>rock5</name><pose>-12 -12 0 0 0 0</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Falling%20Rock%202</uri><name>rock6</name><pose>-14 -12 0 0 0 0</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Falling%20Rock%201</uri><name>rock7</name><pose>7 -9 0 0 0 0</pose></include>
+    <include><uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Falling%20Rock%203</uri><name>rock8</name><pose>8 -8 0 0 0 0</pose></include>
+
+    <!-- Person (ambient cold) -->
+    <include>
+      <uri>model://person_standing</uri>
+      <name>person1</name>
+      <pose>-11 -11 0 0 0 0</pose>
+    </include>
+
+    <!-- Rescue Randy (make hot with a thin thermal overlay) -->
+    <include>
+      <pose>1 0 0 0 0 1.570796</pose>
+      <name>rescue_randy</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Rescue Randy</uri>
+    </include>
+
+    <model name="randy_thermal_overlay">
+      <pose>1 0 0 0 0 0</pose>
       <static>true</static>
       <link name="link">
-        <collision name="c">
-          <geometry><box><size>20 20 0.1</size></box></geometry>
-        </collision>
-        <visual name="v">
-          <geometry><box><size>20 20 0.1</size></box></geometry>
+        <visual name="overlay">
+          <geometry><box><size>0.6 0.4 1.8</size></box></geometry>
           <material>
-            <ambient>0.8 0.8 0.8 1</ambient>
-            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <ambient>0 0 0 0</ambient>
+            <diffuse>0 0 0 0</diffuse>
           </material>
-          <!-- Thermal plugin for neutral surface -->
-          <plugin filename="ignition-gazebo-thermal-system"
-                  name="ignition::gazebo::systems::Thermal">
-            <temperature>300</temperature>
+          <plugin filename="gz-sim-thermal-system" name="gz::sim::systems::Thermal">
+            <temperature>330</temperature> <!-- Randy hot -->
           </plugin>
         </visual>
       </link>
     </model>
 
-    <!-- Warm box -->
-    <model name="warm_box">
-      <pose>2.0 -0.6 1 0 0 0</pose>
-      <static>false</static>
-      <link name="link">
-        <gravity>false</gravity>
-        <kinematic>true</kinematic>
-        <collision name="c"><geometry><box><size>0.6 0.6 2</size></box></geometry></collision>
-        <visual name="v">
-          <geometry><box><size>0.6 0.6 2</size></box></geometry>
-          <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse></material>
-          <plugin filename="ignition-gazebo-thermal-system"
-                  name="ignition::gazebo::systems::Thermal">
-            <temperature>330</temperature>
-          </plugin>
-        </visual>
-      </link>
-    </model>
-
-    <!-- Cold box -->
-    <model name="cold_box">
-      <pose>3.5 0.6 1 0 0 0</pose>
-      <static>false</static>
-      <link name="link">
-        <gravity>false</gravity>
-        <kinematic>true</kinematic>
-        <collision name="c"><geometry><box><size>0.6 0.6 2</size></box></geometry></collision>
-        <visual name="v">
-          <geometry><box><size>0.6 0.6 2</size></box></geometry>
-          <material><ambient>0 0 1 1</ambient><diffuse>0 0 1 1</diffuse></material>
-          <plugin filename="ignition-gazebo-thermal-system"
-                  name="ignition::gazebo::systems::Thermal">
-            <temperature>280</temperature>
-          </plugin>
-        </visual>
-      </link>
-    </model>
-
-    <!-- Thermal overhead camera -->
-    <model name="thermal_cam">
-      <pose>0 0 10 -1.57 0 0</pose>
-      <static>true</static>
-      <link name="link">
-        <!-- 16-bit RAW -->
-        <sensor name="thermal_raw" type="thermal">
-          <always_on>1</always_on>
-          <update_rate>15</update_rate>
-          <visualize>true</visualize>
-          <topic>thermal_camera</topic>
-          <camera>
-            <horizontal_fov>1.2</horizontal_fov>
-            <image><width>320</width><height>240</height><format>L16</format></image>
-            <clip><near>0.5</near><far>100</far></clip>
-          </camera>
-        </sensor>
-
-        <!-- 8-bit displayable -->
-        <sensor name="thermal_8bit" type="thermal">
-          <always_on>1</always_on>
-          <update_rate>15</update_rate>
-          <visualize>true</visualize>
-          <topic>thermal_camera_8bit/image</topic>
-          <camera>
-            <horizontal_fov>1.2</horizontal_fov>
-            <image><width>320</width><height>240</height><format>L8</format></image>
-            <clip><near>0.5</near><far>100</far></clip>
-          </camera>
-          <plugin filename="ignition-gazebo-thermal-sensor-system"
-                  name="ignition::gazebo::systems::ThermalSensor">
-            <min_temp>253.15</min_temp>
-            <max_temp>673.15</max_temp>
-            <resolution>3.0</resolution>
-            <ambient_temperature>300</ambient_temperature>
-          </plugin>
-        </sensor>
-      </link>
-    </model>
+    <!-- NOTE: No world-mounted cameras here.
+         View the drone-mounted thermal/RGB topics via the GUI pickers. -->
   </world>
 </sdf>
-
