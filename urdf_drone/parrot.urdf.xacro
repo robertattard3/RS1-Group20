@@ -1,17 +1,14 @@
 <?xml version="1.0" ?>
 <robot name="parrot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- === Includes: use your package (change if merging elsewhere) === -->
-  <xacro:include filename="$(find thermal_detection)/urdf_drone/common_properties.urdf.xacro"/>
-  <xacro:include filename="$(find thermal_detection)/urdf_drone/parrot.gazebo.xacro"/>
+  <!-- Use your ignition package for includes -->
+  <xacro:include filename="$(find 41068_ignition_bringup)/urdf_drone/common_properties.urdf.xacro"/>
+  <xacro:include filename="$(find 41068_ignition_bringup)/urdf_drone/parrot.gazebo.xacro"/>
 
-  <!-- === Asset root so mesh paths are easy to switch ===
-       If you want to keep meshes in 41068_ignition_bringup, set:
-       asset_root = '$(find 41068_ignition_bringup)/urdf_drone'
-  -->
-  <xacro:property name="asset_root" value="$(find thermal_detection)/urdf_drone"/>
+  <!-- Mesh/asset root (easy to swap if assets move) -->
+  <xacro:property name="asset_root" value="$(find 41068_ignition_bringup)/urdf_drone"/>
 
-  <!-- Camera placement helpers (same as both versions) -->
+  <!-- Camera placement helpers -->
   <xacro:property name="r200_cam_rgb_px" value="0.005"/>
   <xacro:property name="r200_cam_rgb_py" value="0.018"/>
   <xacro:property name="r200_cam_rgb_pz" value="0.013"/>
@@ -28,7 +25,7 @@
         izz="3.328e-3"/>
     </inertial>
 
-    <!-- (Optional) simple collision box, keep commented unless you need it
+    <!-- (Optional) collision, leave commented unless you need it
     <collision name="collision">
       <origin xyz="-0.00424 0.00014 -0.00595" rpy="0 0 0"/>
       <geometry><box size="0.5 0.5 0.2"/></geometry>
@@ -133,6 +130,7 @@
   <link name="camera_depth_optical_frame"/>
 
   <!-- =============== Add Gazebo sensors + thermal cam =============== -->
+  <!-- You can pass visualize toggles here if you like -->
   <xacro:parrot_gz_extensions/>
 
 </robot>
