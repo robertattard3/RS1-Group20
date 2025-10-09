@@ -115,20 +115,6 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration('rviz'))
     )
     ld.add_action(rviz_node)
- 
- # --- LiDAR filter node ---
-    lidar_filter_node = Node(
-        package='lidar_filter',
-        executable='lidar_filter_node',
-        output='screen',
-        parameters=[{'fov_deg': 90.0,    # optional, customize FoV
-                    'max_range': 15.0}], # optional, max range
-        #remappings=[
-           # ('/scan', '/scan_raw'),           # raw input
-          #  ('/scan_filtered', '/scan')  # filtered output
-        #]
-    )
-    ld.add_action(lidar_filter_node)
 
     # Nav2 enables mapping and waypoint following
     nav2 = IncludeLaunchDescription(

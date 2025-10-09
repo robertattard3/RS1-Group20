@@ -34,7 +34,7 @@
   direction: ROS_TO_GZ
 
 # Lidar: laserscan
-- ros_topic_name: "/scan_raw"
+- ros_topic_name: "/scan"
   gz_topic_name: "/model/husky/scan"
   ros_type_name: "sensor_msgs/msg/LaserScan"
   gz_type_name: "gz.msgs.LaserScan"
