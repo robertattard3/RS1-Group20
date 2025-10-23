@@ -1,20 +1,17 @@
-<?xml version="1.0" ?>
-<robot name="parrot" xmlns:xacro="http://ros.org/wiki/xacro">
+<?xml version="1.0"?>
+<robot name="parrot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- Keep the original includes from the second package -->
+  <!-- Includes (inside this package) -->
   <xacro:include filename="$(find 41068_ignition_bringup)/urdf_drone/common_properties.urdf.xacro"/>
   <xacro:include filename="$(find 41068_ignition_bringup)/urdf_drone/parrot.gazebo.xacro"/>
 
-  <!-- Properties (unchanged) -->
+  <!-- Camera placement helpers -->
   <xacro:property name="r200_cam_rgb_px" value="0.005"/>
   <xacro:property name="r200_cam_rgb_py" value="0.018"/>
   <xacro:property name="r200_cam_rgb_pz" value="0.013"/>
   <xacro:property name="r200_cam_depth_offset" value="0.01"/>
 
-  <!-- Optional switch for thermal add-on (defaults ON)
-  <xacro:arg name="with_thermal" default="true"/> -->
-
-  <!-- ================= Base geometry & frames (unchanged) ================= -->
+  <!-- ================= Base hull ================= -->
   <link name="base_link">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -22,29 +19,34 @@
       <inertia ixx="1.805e-3" ixy="-8.619e-7" ixz="1.555e-5"
                iyy="1.764e-3" iyz="3.595e-7" izz="3.328e-3"/>
     </inertial>
+
     <visual name="hull">
       <geometry>
         <mesh filename="file://$(find 41068_ignition_bringup)/urdf_drone/meshes/hull.dae"/>
       </geometry>
     </visual>
+
     <visual name="propeller_rr">
       <origin xyz="-0.09035 -0.11423 -0.00501"/>
       <geometry>
         <mesh filename="file://$(find 41068_ignition_bringup)/urdf_drone/meshes/propeller_rr.dae"/>
       </geometry>
     </visual>
+
     <visual name="propeller_rl">
       <origin xyz="0.09035 0.11452 -0.00501"/>
       <geometry>
         <mesh filename="file://$(find 41068_ignition_bringup)/urdf_drone/meshes/propeller_rl.dae"/>
       </geometry>
     </visual>
+
     <visual name="propeller_fr">
       <origin xyz="0.08456 -0.11435 -0.00501"/>
       <geometry>
         <mesh filename="file://$(find 41068_ignition_bringup)/urdf_drone/meshes/propeller_fr.dae"/>
       </geometry>
     </visual>
+
     <visual name="propeller_fl">
       <origin xyz="0.08456 0.11463 -0.00501"/>
       <geometry>
@@ -53,7 +55,7 @@
     </visual>
   </link>
 
-  <!-- IMU frame -->
+  <!-- ================= IMU ================= -->
   <joint name="imu_joint" type="fixed">
     <parent link="base_link"/>
     <child  link="imu_link"/>
@@ -61,7 +63,7 @@
   </joint>
   <link name="imu_link"/>
 
-  <!-- Lidar frame -->
+  <!-- ================= Lidar puck (viz) ================= -->
   <joint name="scan_joint" type="fixed">
     <parent link="base_link"/>
     <child  link="base_scan"/>
@@ -80,11 +82,11 @@
     </inertial>
   </link>
 
-  <!-- Camera mast & frames -->
+  <!-- ================= Camera mast ================= -->
   <joint name="camera_joint" type="fixed">
-    <origin xyz="0.25 0.0 0.25" rpy="0 0.785398 0"/>
     <parent link="base_link"/>
     <child  link="camera_link"/>
+    <origin xyz="0.25 0.0 0.25" rpy="0 0.785398 0"/>
   </joint>
   <link name="camera_link">
     <visual>
@@ -99,81 +101,37 @@
     </visual>
   </link>
 
-  <!-- RGB frames -->
+  <!-- ================= RGB frames ================= -->
   <joint name="camera_rgb_joint" type="fixed">
-    <origin xyz="${r200_cam_rgb_px} ${r200_cam_rgb_py} ${r200_cam_rgb_pz}"/>
     <parent link="camera_link"/>
     <child  link="camera_rgb_frame"/>
+    <origin xyz="${r200_cam_rgb_px} ${r200_cam_rgb_py} ${r200_cam_rgb_pz}"/>
   </joint>
   <link name="camera_rgb_frame"/>
+
   <joint name="camera_rgb_optical_joint" type="fixed">
-    <origin xyz="0 0 0" rpy="-1.57 0 -1.57"/>
     <parent link="camera_rgb_frame"/>
     <child  link="camera_rgb_optical_frame"/>
+    <origin xyz="0 0 0" rpy="-1.57 0 -1.57"/>
   </joint>
   <link name="camera_rgb_optical_frame"/>
 
-  <!-- Depth frames -->
+  <!-- ================= Depth frames ================= -->
   <joint name="camera_depth_joint" type="fixed">
-    <origin xyz="${r200_cam_rgb_px} ${r200_cam_rgb_py + r200_cam_depth_offset} ${r200_cam_rgb_pz}"/>
     <parent link="camera_link"/>
     <child  link="camera_depth_frame"/>
+    <origin xyz="${r200_cam_rgb_px} ${r200_cam_rgb_py + r200_cam_depth_offset} ${r200_cam_rgb_pz}"/>
   </joint>
   <link name="camera_depth_frame"/>
+
   <joint name="camera_depth_optical_joint" type="fixed">
-    <origin xyz="0 0 0" rpy="-1.57 0 -1.57"/>
     <parent link="camera_depth_frame"/>
     <child  link="camera_depth_optical_frame"/>
+    <origin xyz="0 0 0" rpy="-1.57 0 -1.57"/>
   </joint>
   <link name="camera_depth_optical_frame"/>
 
-  
-  <!-- ================= Thermal add-on (only addition) ================= 
-  <xacro:if value="$(arg with_thermal)">
-     Link + fixed joint off camera_link to follow the mast 
-    <link name="thermal_cam_link">
-      <inertial>
-        <mass value="0.05"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
-      </inertial>
-      <visual name="thermal_cam_vis">
-        <origin xyz="0 0 0"/>
-        <geometry><box size="0.03 0.03 0.03"/></geometry>
-      </visual>
-    </link>
-
-    <joint name="thermal_cam_joint" type="fixed">
-      <parent link="camera_link"/>
-      <child  link="thermal_cam_link"/>
-      <origin xyz="0.06 0 0" rpy="0 0 0"/>
-       for nadir: rpy="0 -1.570796 0" 
-    </joint>-->
-
-    <!-- Thermal sensors (topics match your detector/bridge)
-    <gazebo reference="thermal_cam_link">
-       16-bit temperature image for processing 
-      <sensor name="parrot_thermal_l16" type="thermal">
-        <always_on>1</always_on>
-        <update_rate>15</update_rate>
-        <visualize>true</visualize>
-        <topic>/parrot/thermal/image_raw</topic>
-        <gz_frame_id>thermal_cam_link</gz_frame_id>
-        <camera>
-          <horizontal_fov>1.047</horizontal_fov>
-          <image>
-            <width>320</width>
-            <height>240</height>
-            <format>L16</format>
-          </image>
-          <clip><near>0.05</near><far>100</far></clip>
-        </camera>
-      </sensor> -->
-
-      
-    
-
-  <!-- Note: All other sensors/plugins remain provided by parrot.gazebo.xacro include -->
+  <!-- ================= Gazebo sensors + thermal camera ================= -->
+  <xacro:parrot_gz_extensions/>
 
 </robot>
-
