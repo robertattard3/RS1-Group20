@@ -37,15 +37,7 @@ def generate_launch_description():
             'params_file': PathJoinSubstitution([config_path, 'nav2_params.yaml'])
         }.items()
     )
-
-    planner_node = Node(
-    	package='path_planner_cpp',
-    	executable='planner_node',
-    	name='planner_node',
-    	output='screen'
-    )
-
-    ld.add_action(planner_node)	
+    
     ld.add_action(slam_node)
     ld.add_action(navigation)
 

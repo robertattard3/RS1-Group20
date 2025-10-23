@@ -11,8 +11,8 @@
   <xacro:property name="r200_cam_rgb_pz" value="0.013"/>
   <xacro:property name="r200_cam_depth_offset" value="0.01"/>
 
-  <!-- Optional switch for thermal add-on (defaults ON) -->
-  <xacro:arg name="with_thermal" default="true"/>
+  <!-- Optional switch for thermal add-on (defaults ON)
+  <xacro:arg name="with_thermal" default="true"/> -->
 
   <!-- ================= Base geometry & frames (unchanged) ================= -->
   <link name="base_link">
@@ -127,9 +127,10 @@
   </joint>
   <link name="camera_depth_optical_frame"/>
 
-  <!-- ================= Thermal add-on (only addition) ================= -->
+  
+  <!-- ================= Thermal add-on (only addition) ================= 
   <xacro:if value="$(arg with_thermal)">
-    <!-- Link + fixed joint off camera_link to follow the mast -->
+     Link + fixed joint off camera_link to follow the mast 
     <link name="thermal_cam_link">
       <inertial>
         <mass value="0.05"/>
@@ -146,12 +147,12 @@
       <parent link="camera_link"/>
       <child  link="thermal_cam_link"/>
       <origin xyz="0.06 0 0" rpy="0 0 0"/>
-      <!-- for nadir: rpy="0 -1.570796 0" -->
-    </joint>
+       for nadir: rpy="0 -1.570796 0" 
+    </joint>-->
 
-    <!-- Thermal sensors (topics match your detector/bridge) -->
+    <!-- Thermal sensors (topics match your detector/bridge)
     <gazebo reference="thermal_cam_link">
-      <!-- 16-bit temperature image for processing -->
+       16-bit temperature image for processing 
       <sensor name="parrot_thermal_l16" type="thermal">
         <always_on>1</always_on>
         <update_rate>15</update_rate>
@@ -167,27 +168,10 @@
           </image>
           <clip><near>0.05</near><far>100</far></clip>
         </camera>
-      </sensor>
+      </sensor> -->
 
-      <!-- 8-bit grayscale for easy viewing -->
-      <sensor name="parrot_thermal_l8" type="thermal">
-        <always_on>1</always_on>
-        <update_rate>15</update_rate>
-        <visualize>true</visualize>
-        <topic>/parrot/thermal/image_mono8</topic>
-        <gz_frame_id>thermal_cam_link</gz_frame_id>
-        <camera>
-          <horizontal_fov>1.047</horizontal_fov>
-          <image>
-            <width>320</width>
-            <height>240</height>
-            <format>L8</format>
-          </image>
-          <clip><near>0.05</near><far>100</far></clip>
-        </camera>
-      </sensor>
-    </gazebo>
-  </xacro:if>
+      
+    
 
   <!-- Note: All other sensors/plugins remain provided by parrot.gazebo.xacro include -->
 
