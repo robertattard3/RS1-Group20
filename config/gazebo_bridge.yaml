@@ -1,55 +1,39 @@
-# ~/ros2_ws/src/41068_ignition_bringup/config/gazebo_bridge.yaml
-
+# Clock
 - ros_topic_name: /clock
   gz_topic_name: /clock
   ros_type_name: rosgraph_msgs/msg/Clock
   gz_type_name: gz.msgs.Clock
   direction: GZ_TO_ROS
 
+# Odometry (use the *_with_covariance* source)
 - ros_topic_name: /odometry
-  gz_topic_name: /model/parrot/odometry
+  gz_topic_name: /model/parrot/odometry_with_covariance
   ros_type_name: nav_msgs/msg/Odometry
-  gz_type_name: gz.msgs.Odometry
+  gz_type_name: gz.msgs.OdometryWithCovariance
   direction: GZ_TO_ROS
 
-- ros_topic_name: /imu
-  gz_topic_name: /parrot/imu
-  ros_type_name: sensor_msgs/msg/Imu
-  gz_type_name: gz.msgs.IMU
-  direction: GZ_TO_ROS
-
+# Laser
 - ros_topic_name: /scan
   gz_topic_name: /parrot/scan
   ros_type_name: sensor_msgs/msg/LaserScan
   gz_type_name: gz.msgs.LaserScan
   direction: GZ_TO_ROS
 
+# IMU (keep if you want EKF to fuse it)
+- ros_topic_name: /imu
+  gz_topic_name: /parrot/imu
+  ros_type_name: sensor_msgs/msg/Imu
+  gz_type_name: gz.msgs.IMU
+  direction: GZ_TO_ROS
+
+# Velocity command to the robot
 - ros_topic_name: /cmd_vel
   gz_topic_name: /model/parrot/cmd_vel
   ros_type_name: geometry_msgs/msg/Twist
   gz_type_name: gz.msgs.Twist
   direction: ROS_TO_GZ
 
-- topic_name: /parrot/camera/image
-  ros_type_name: sensor_msgs/msg/Image
-  gz_type_name: gz.msgs.Image
-  direction: GZ_TO_ROS
-
-- topic_name: /parrot/camera/depth_image
-  ros_type_name: sensor_msgs/msg/Image
-  gz_type_name: gz.msgs.Image
-  direction: GZ_TO_ROS
-
-- topic_name: /parrot/camera/depth_camera_info
-  ros_type_name: sensor_msgs/msg/CameraInfo
-  gz_type_name: gz.msgs.CameraInfo
-  direction: GZ_TO_ROS
-
-- topic_name: /parrot/camera/points
-  ros_type_name: sensor_msgs/msg/PointCloud2
-  gz_type_name: gz.msgs.PointCloudPacked
-  direction: GZ_TO_ROS
-
+# Thermal camera (only thing extra you asked to keep)
 - topic_name: /parrot/thermal/image_mono8
   ros_type_name: sensor_msgs/msg/Image
   gz_type_name: gz.msgs.Image
@@ -59,3 +43,28 @@
   ros_type_name: sensor_msgs/msg/CameraInfo
   gz_type_name: gz.msgs.CameraInfo
   direction: GZ_TO_ROS
+
+
+# --------------------------------------------------------------------
+# Everything below is temporarily disabled to keep the sim light.
+# Uncomment any line to re-enable it later.
+
+# - topic_name: /parrot/camera/image
+#   ros_type_name: sensor_msgs/msg/Image
+#   gz_type_name: gz.msgs.Image
+#   direction: GZ_TO_ROS
+#
+# - topic_name: /parrot/camera/depth_image
+#   ros_type_name: sensor_msgs/msg/Image
+#   gz_type_name: gz.msgs.Image
+#   direction: GZ_TO_ROS
+#
+# - topic_name: /parrot/camera/depth_camera_info
+#   ros_type_name: sensor_msgs/msg/CameraInfo
+#   gz_type_name: gz.msgs.CameraInfo
+#   direction: GZ_TO_ROS
+#
+# - topic_name: /parrot/camera/points
+#   ros_type_name: sensor_msgs/msg/PointCloud2
+#   gz_type_name: gz.msgs.PointCloudPacked
+#   direction: GZ_TO_ROS
