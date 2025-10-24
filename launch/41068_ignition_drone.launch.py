@@ -1,3 +1,4 @@
+# 41068_ignition_bringup/launch/41068_ignition_drone.launch.py
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
@@ -66,8 +67,11 @@ def generate_launch_description():
         output='screen',
     )
 
-    # ---- Start Ignition Gazebo ----
-    gz = ExecuteProcess(cmd=['ign', 'gazebo', world, '-r'], output='screen')
+    # ---- Start Ignition Gazebo (headless for perf) ----
+    gz = ExecuteProcess(
+        cmd=['ign', 'gazebo', world, '-r', '--headless-rendering'],
+        output='screen'
+    )
 
     # ---- Spawn the drone from /robot_description ----
     spawn = Node(
@@ -78,21 +82,18 @@ def generate_launch_description():
         arguments=['-topic', '/robot_description', '-name', 'parrot', '-z', '2.0'],
     )
 
-    # ---- Bridge topics as per YAML (pass as parameters, not --params-file) ----
+    # ---- Bridge topics from YAML via parameter ----
     bridge = Node(
-    package='ros_gz_bridge',
-    executable='parameter_bridge',
-    name='parameter_bridge',
-    output='screen',
-    parameters=[{
-        'config_file': PathJoinSubstitution([
-            pkg_share, 'config', 'gazebo_bridge.yaml'
-        ])
-    }],
-)
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        name='parameter_bridge',
+        output='screen',
+        parameters=[{
+            'config_file': PathJoinSubstitution([pkg_share, 'config', 'gazebo_bridge.yaml'])
+        }],
+    )
 
-
-    # ---- EKF (robot_localization): consumes /odometry + /imu, publishes odom->base_link ----
+    # ---- EKF (odom->base_link) ----
     ekf = Node(
         package='robot_localization',
         executable='ekf_node',
@@ -104,7 +105,7 @@ def generate_launch_description():
         ],
     )
 
-    # ---- SLAM (map->odom). If off, publish identity map->odom so TF tree is complete. ----
+    # ---- SLAM (map->odom) or identity map->odom ----
     slam_node = Node(
         package='slam_toolbox',
         executable='async_slam_toolbox_node',
@@ -139,7 +140,7 @@ def generate_launch_description():
     # ---- Nav2 (optional) ----
     nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [PathJoinSubstitution([pkg_share, 'launch', '41068_navigation.launch.py'])]
+            PathJoinSubstitution([pkg_share, 'launch', '41068_navigation.launch.py'])
         ),
         launch_arguments={'use_sim_time': use_sim_time}.items(),
         condition=IfCondition(nav2_flag),
