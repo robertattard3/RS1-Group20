@@ -1,180 +1,182 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="parrot" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:arg name="laser_visual"  default="false" />
+  <xacro:arg name="camera_visual" default="false"/>
+  <xacro:arg name="imu_visual"    default="false"/>
 
-  <!-- Single macro adding IMU, LiDAR, RGBD, Thermal + model systems -->
-  <xacro:macro name="parrot_gz_extensions" params="">
+  <!-- <xacro:include filename="$(find 41068_ignition_bringup)/urdf/wheel.urdf.xacro"/> -->
 
-    <!-- ================= IMU on imu_link ================= -->
- <!-- ================= IMU on imu_link ================= -->
-<gazebo reference="imu_link">
-  <sensor type="imu" name="parrot_imu">
-    <always_on>true</always_on>
-    <update_rate>100</update_rate>
-    <!-- The GZ transport topic to publish -->
-    <topic>/parrot/imu</topic>
-    <!-- Frame used in the message header -->
-    <frame_id>imu_link</frame_id>
-    <imu>
-      <angular_velocity>
-        <x><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev><bias_mean>7.5e-6</bias_mean><bias_stddev>8e-7</bias_stddev></noise></x>
-        <y><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev><bias_mean>7.5e-6</bias_mean><bias_stddev>8e-7</bias_stddev></noise></y>
-        <z><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev><bias_mean>7.5e-6</bias_mean><bias_stddev>8e-7</bias_stddev></noise></z>
-      </angular_velocity>
-      <linear_acceleration>
-        <x><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev><bias_mean>0.1</bias_mean><bias_stddev>0.001</bias_stddev></noise></x>
-        <y><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev><bias_mean>0.1</bias_mean><bias_stddev>0.001</bias_stddev></noise></y>
-        <z><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev><bias_mean>0.1</bias_mean><bias_stddev>0.001</bias_stddev></noise></z>
-      </linear_acceleration>
-    </imu>
-  </sensor>
-</gazebo>
+  <gazebo reference="imu_link">
+    <sensor type="imu" name="imu">
+      <always_on>true</always_on>
+      <visualize>$(arg imu_visual)</visualize>
+      <update_rate>100</update_rate>
+      <topic>model/husky/imu</topic>
+      <gz_frame_id>imu_link</gz_frame_id>
+      <imu>
+        <angular_velocity>
+          <x>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
+          </x>
+          <y>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
+          </y>
+          <z>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
+          </z>
+        </angular_velocity>
+        <linear_acceleration>
+          <x>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
+          </x>
+          <y>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
+          </y>
+          <z>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
+          </z>
+        </linear_acceleration>
+      </imu>
+      <plugin
+        filename="ignition-gazebo-imu-system"
+        name="ignition::gazebo::systems::Imu">
+      </plugin>
+    </sensor>
+    <material>Gazebo/Grey</material>
+  </gazebo>
+ 
+  <!-- Move base directly without faffing around with diff drive controllers -->
+  <gazebo>
+    <plugin
+      filename="ignition-gazebo-velocity-control-system"
+      name="ignition::gazebo::systems::VelocityControl">
+      <topic>model/husky/cmd_vel</topic>
+    </plugin>
+  </gazebo>
 
+  <!-- Publish odometry separately -->
+  <gazebo>
+    <plugin
+      filename="ignition-gazebo-odometry-publisher-system"
+      name="ignition::gazebo::systems::OdometryPublisher">
+      <topic>model/husky/odometry</topic>
+      <odom_publish_frequency>20</odom_publish_frequency>
+      <odom_frame>odom</odom_frame>
+      <robot_base_frame>base_link</robot_base_frame>
+      <dimensions>3</dimensions>
+    </plugin>
+  </gazebo>
 
-    <!-- ================ GPU LiDAR on base_scan ================ -->
-    <gazebo reference="base_scan">
-      <sensor type="gpu_lidar" name="parrot_lidar">
-        <always_on>true</always_on>
-        <update_rate>10</update_rate>
-        <topic>/parrot/scan</topic>
-        <gz_frame_id>base_scan</gz_frame_id>
-        <ray>
-          <scan>
-            <horizontal>
-              <samples>360</samples>
-              <resolution>1</resolution>
-              <min_angle>-1.17</min_angle>
-              <max_angle>1.17</max_angle>
-            </horizontal>
-          </scan>
-          <range>
-            <min>0.2</min>
-            <max>15</max>
-            <resolution>0.015</resolution>
-          </range>
-          <noise>
-            <type>gaussian</type>
-            <mean>0.0</mean>
-            <stddev>0.01</stddev>
-          </noise>
-        </ray>
-      </sensor>
-    </gazebo>
+  <gazebo>
+    <plugin
+      filename="ignition-gazebo-joint-state-publisher-system"
+      name="ignition::gazebo::systems::JointStatePublisher">
+      <topic>model/husky/joint_states</topic>
+    </plugin>
+  </gazebo>
 
-    <!-- ============ RGBD camera on camera_link ============ -->
-    <gazebo reference="camera_link">
-      <sensor name="parrot_rgbd" type="rgbd_camera">
-        <always_on>1</always_on>
-        <update_rate>10</update_rate>
-        <topic>/parrot/camera</topic>
-        <gz_frame_id>camera_link</gz_frame_id>
-        <camera>
-          <horizontal_fov>2.0944</horizontal_fov>
-          <image>
-            <width>720</width>
-            <height>480</height>
-          </image>
+  <!-- Lidar and cameras use the general Sensors plugin -->
+  <gazebo>
+    <plugin
+        filename="libignition-gazebo-sensors-system.so"
+        name="ignition::gazebo::systems::Sensors">
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="base_scan">
+    <material>Gazebo/FlatBlack</material>
+    <sensor type="gpu_lidar" name="lidar">
+      <pose relative_to='base_scan'>0 0 0 0 0 0</pose>
+      <visualize>$(arg laser_visual)</visualize>
+      <topic>model/husky/scan</topic>
+      <update_rate>3</update_rate>
+      <gz_frame_id>base_scan</gz_frame_id>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.17</min_angle>
+            <max_angle>1.17</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.2</min>
+          <max>15</max>
+          <resolution>0.015</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <always_on>true</always_on>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="camera_link">
+    <sensor name="rgbd_camera" type="rgbd_camera">
+      <camera>
+        <horizontal_fov>2.0944</horizontal_fov>
+        <image>
+          <width>720</width>
+          <height>480</height>
+        </image>
+        <clip>
+          <near>0.1</near>
+          <far>40</far>
+        </clip>
+        <!-- depth_camera near/far clip seems to be ignored for some reason -->
+        <!--    We're using Ignition Gazebo Fortress, which uses sdf format 1.9: http://sdformat.org/tutorials?tut=roadmap -->
+        <!--    This takes the depth_camera parameter with near / far clip http://sdformat.org/spec?ver=1.4&elem=sensor  -->
+        <!-- We also use ign sensors v6 ( run ls | grep libignition-sensors in /usr/lib/x86_64-linux-gnu)-->
+        <!-- Looking at the source code, the sdf sets HasDepthCamera() and corresponding HasDepthNearClip() & HasDepthFarClip() which are used in RgbdCameraSensor.cc, so this should work? -->
+        <!--    SDF description of Camera: https://github.com/gazebosim/sdformat/blob/sdf9/src/Camera.cc#L598-->
+        <!--    Camera sensor source code: https://github.com/gazebosim/gz-sensors/blob/ign-sensors6/src/RgbdCameraSensor.cc#L311  -->
+        <depth_camera>
           <clip>
-            <near>0.1</near>
-            <far>40</far>
+            <near>0.4</near>
+            <far>10</far>
           </clip>
-          <depth_camera>
-            <clip>
-              <near>0.4</near>
-              <far>10</far>
-            </clip>
-          </depth_camera>
-        </camera>
-      </sensor>
-    </gazebo>
+        </depth_camera>
+      </camera>
+      <always_on>1</always_on>
+      <update_rate>3</update_rate> <!--10-->
+      <visualize>$(arg camera_visual)</visualize>
+      <topic>/model/husky/camera</topic>
+      <gz_frame_id>camera_link</gz_frame_id>
+    </sensor>
+  </gazebo>
 
-    <!-- ===== Thermal camera: link + joint following the drone ===== -->
-    <link name="thermal_cam_link">
-      <inertial>
-        <mass value="0.05"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
-      </inertial>
-      <visual name="thermal_cam_vis">
-        <origin xyz="0 0 0"/>
-        <geometry><box size="0.03 0.03 0.03"/></geometry>
-      </visual>
-    </link>
-
-    <joint name="thermal_cam_joint" type="fixed">
-      <parent link="camera_link"/>
-      <child  link="thermal_cam_link"/>
-      <origin xyz="0.06 0 0" rpy="0 0 0"/>
-    </joint>
-
-    <!-- ============ Thermal sensors on thermal_cam_link ============ -->
-    <gazebo reference="thermal_cam_link">
-      <!-- 16-bit temperature image -->
-      <sensor name="parrot_thermal_l16" type="thermal">
-        <always_on>1</always_on>
-        <update_rate>15</update_rate>
-        <visualize>true</visualize>
-        <topic>/parrot/thermal/image_raw</topic>
-        <gz_frame_id>thermal_cam_link</gz_frame_id>
-        <camera>
-          <horizontal_fov>1.047</horizontal_fov>
-          <image>
-            <width>320</width>
-            <height>240</height>
-            <format>L16</format>
-          </image>
-          <clip><near>0.05</near><far>100</far></clip>
-        </camera>
-      </sensor>
-
-      <!-- 8-bit grayscale for easy viewing -->
-      <sensor name="parrot_thermal_l8" type="thermal">
-        <always_on>1</always_on>
-        <update_rate>15</update_rate>
-        <visualize>true</visualize>
-        <topic>/parrot/thermal/image_mono8</topic>
-        <gz_frame_id>thermal_cam_link</gz_frame_id>
-        <camera>
-          <horizontal_fov>1.047</horizontal_fov>
-          <image>
-            <width>320</width>
-            <height>240</height>
-            <format>L8</format>
-          </image>
-          <clip><near>0.05</near><far>100</far></clip>
-        </camera>
-      </sensor>
-    </gazebo>
-
-   <!-- ===== Model-level Ignition systems (cmd_vel + odometry) ===== -->
-<gazebo>
-  <!-- VelocityControl: listens on /model/parrot/cmd_vel -->
-  <plugin name="ignition::gazebo::systems::VelocityControl"
-          filename="libignition-gazebo-velocity-control-system.so">
-    <topic>/model/parrot/cmd_vel</topic>
-  </plugin>
-
-<!-- OdometryPublisher (Ignition/GZ): publishes /model/parrot/odometry -->
-<plugin name="ignition::gazebo::systems::OdometryPublisher"
-        filename="libignition-gazebo-odometry-publisher-system.so">
-  <!-- GZ topic -->
-  <topic>/model/parrot/odometry</topic>
-
-  <!-- Force ROS-standard frame names (be redundant for version differences) -->
-  <frame_id>odom</frame_id>                <!-- used by some versions -->
-  <odom_frame>odom</odom_frame>            <!-- used by others -->
-  <odometry_frame>odom</odometry_frame>    <!-- used by others -->
-
-  <child_frame_id>base_link</child_frame_id>
-  <base_frame>base_link</base_frame>
-  <robot_base_frame>base_link</robot_base_frame>
-  <publish_frequency>30</publish_frequency>
-  <!-- THIS is the important one -->
-  <use_scoped_frame_names>false</use_scoped_frame_names>
-
-  <!-- Let EKF publish odom->base_link TF -->
-  <publish_tf>true</publish_tf>
-</plugin>
-
-</gazebo>
-</xacro:macro>
 </robot>

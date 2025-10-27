@@ -1,70 +1,69 @@
-# Clock
-- ros_topic_name: /clock
-  gz_topic_name: /clock
-  ros_type_name: rosgraph_msgs/msg/Clock
-  gz_type_name: gz.msgs.Clock
+# Timing consistency
+- ros_topic_name: '/clock'
+  gz_topic_name: '/clock'
+  ros_type_name: 'rosgraph_msgs/msg/Clock'
+  gz_type_name: 'gz.msgs.Clock'
   direction: GZ_TO_ROS
 
-# Odometry (use the *_with_covariance* source)
-- ros_topic_name: /odometry
-  gz_topic_name: /model/parrot/odometry_with_covariance
-  ros_type_name: nav_msgs/msg/Odometry
-  gz_type_name: gz.msgs.OdometryWithCovariance
+# Position of joints [ie. wheels] (published by ignition::gazebo::systems::JointStatePublisher)
+- ros_topic_name: '/joint_states'
+  gz_topic_name: '/model/husky/joint_states'
+  ros_type_name: 'sensor_msgs/msg/JointState'
+  gz_type_name: 'ignition.msgs.Model'
   direction: GZ_TO_ROS
 
-# Laser
-- ros_topic_name: /scan
-  gz_topic_name: /parrot/scan
-  ros_type_name: sensor_msgs/msg/LaserScan
-  gz_type_name: gz.msgs.LaserScan
+# # Odometry (published by ignition::gazebo::systems::OdometryPublisher)
+- ros_topic_name: '/odometry'
+  gz_topic_name: '/model/parrot/odometry'
+  ros_type_name: 'nav_msgs/msg/Odometry'
+  gz_type_name: 'ignition.msgs.Odometry'
   direction: GZ_TO_ROS
 
-# IMU (keep if you want EKF to fuse it)
-- ros_topic_name: /imu
-  gz_topic_name: /parrot/imu
-  ros_type_name: sensor_msgs/msg/Imu
-  gz_type_name: gz.msgs.IMU
+# Intertial Measurement Unit
+- ros_topic_name: '/imu'
+  gz_topic_name: '/model/husky/imu'
+  ros_type_name: 'sensor_msgs/msg/Imu'
+  gz_type_name: 'ignition.msgs.IMU'
   direction: GZ_TO_ROS
 
-# Velocity command to the robot
-- ros_topic_name: /cmd_vel
-  gz_topic_name: /model/parrot/cmd_vel
-  ros_type_name: geometry_msgs/msg/Twist
-  gz_type_name: gz.msgs.Twist
+# Command velocity
+- ros_topic_name: '/cmd_vel'
+  gz_topic_name: '/model/husky/cmd_vel'
+  ros_type_name: 'geometry_msgs/msg/Twist'
+  gz_type_name: 'ignition.msgs.Twist'
   direction: ROS_TO_GZ
 
-# Thermal camera (only thing extra you asked to keep)
-- topic_name: /parrot/thermal/image_mono8
-  ros_type_name: sensor_msgs/msg/Image
-  gz_type_name: gz.msgs.Image
+# Lidar: laserscan
+- ros_topic_name: "/scan"
+  gz_topic_name: "/model/husky/scan"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
   direction: GZ_TO_ROS
 
-- topic_name: /parrot/thermal/camera_info
-  ros_type_name: sensor_msgs/msg/CameraInfo
-  gz_type_name: gz.msgs.CameraInfo
+# Lidar: pointcloud
+- ros_topic_name: "/scan/points"
+  gz_topic_name: "/model/husky/scan/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
   direction: GZ_TO_ROS
 
+# Camera: RGB
+- ros_topic_name: "/camera/image"
+  gz_topic_name: "/model/husky/camera/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "ignition.msgs.Image"
+  direction: GZ_TO_ROS
 
-# --------------------------------------------------------------------
-# Everything below is temporarily disabled to keep the sim light.
-# Uncomment any line to re-enable it later.
+# Camera: depth
+- ros_topic_name: "/camera/depth/image"
+  gz_topic_name: "/model/husky/camera/depth_image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "ignition.msgs.Image"
+  direction: GZ_TO_ROS
 
-# - topic_name: /parrot/camera/image
-#   ros_type_name: sensor_msgs/msg/Image
-#   gz_type_name: gz.msgs.Image
-#   direction: GZ_TO_ROS
-#
-# - topic_name: /parrot/camera/depth_image
-#   ros_type_name: sensor_msgs/msg/Image
-#   gz_type_name: gz.msgs.Image
-#   direction: GZ_TO_ROS
-#
-# - topic_name: /parrot/camera/depth_camera_info
-#   ros_type_name: sensor_msgs/msg/CameraInfo
-#   gz_type_name: gz.msgs.CameraInfo
-#   direction: GZ_TO_ROS
-#
-# - topic_name: /parrot/camera/points
-#   ros_type_name: sensor_msgs/msg/PointCloud2
-#   gz_type_name: gz.msgs.PointCloudPacked
-#   direction: GZ_TO_ROS
+# Camera: depth pointcloud
+- ros_topic_name: "/camera/depth/points"
+  gz_topic_name: "/model/husky/camera/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "ignition.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
