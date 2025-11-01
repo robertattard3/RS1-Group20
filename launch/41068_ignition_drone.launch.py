@@ -153,4 +153,13 @@ def generate_launch_description():
     )
     ld.add_action(rqt_process)
 
+    planner_node = Node(
+    	package='path_planner_cpp',
+    	executable='planner_node',
+    	name='planner_node',
+    	output='screen'
+    )
+
+    ld.add_action(planner_node)	
+
     return ld
